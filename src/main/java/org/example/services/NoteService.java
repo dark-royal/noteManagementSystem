@@ -8,7 +8,6 @@ import org.example.dtos.responses.CreateNoteResponse;
 import org.example.dtos.responses.UpdateNoteResponse;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -19,6 +18,10 @@ public interface NoteService {
 
     void deleteNote(DeleteNoteRequest deleteNoteRequest);
 
-    UpdateNoteResponse updateNote(UpdateNotesRequest updateNoteRequest);
+    //UpdateNoteResponse updateNote(UpdateNotesRequest updateNoteRequest);
+
+    Notes updateNote(UpdateNotesRequest updateNoteRequest, String id);
+
+    List<Notes> getAllNote();
 
 }

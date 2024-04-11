@@ -9,19 +9,22 @@ import org.example.dtos.responses.CreateNoteResponse;
 import org.example.dtos.responses.UpdateNoteResponse;
 import org.example.exceptions.NoteAlreadyExistException;
 import org.example.exceptions.NoteNotFoundException;
-import org.example.exceptions.NoteNotUpdatedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 @Service
-public class NoteServiceImpl implements NoteService{
+
+public class NoteServiceImpl implements NoteService {
 
     @Autowired
     private NoteRepository noteRepository;
+
     @Override
     public CreateNoteResponse createNote(CreateNoteRequest createNoteRequest) {
-        validateCreateNote(createNoteRequest.getContent(),createNoteRequest.getTitle());
+        validateCreateNote(createNoteRequest.getContent(), createNoteRequest.getTitle());
         Notes note = new Notes();
         note.setTitle(createNoteRequest.getTitle());
         note.setContent(createNoteRequest.getContent());
@@ -34,8 +37,8 @@ public class NoteServiceImpl implements NoteService{
     }
 
     private void validateCreateNote(String content, String title) {
-        Notes note = noteRepository.findByContentAndTitle(content,title);
-        if(note != null) throw new NoteAlreadyExistException("note exist already");
+        Notes note = noteRepository.findByContentAndTitle(content, title);
+        if (note != null) throw new NoteAlreadyExistException("note exist already");
 
     }
 
@@ -47,28 +50,34 @@ public class NoteServiceImpl implements NoteService{
     @Override
     public void deleteNote(DeleteNoteRequest deleteNoteRequest) {
         Notes notes = noteRepository.findNotesByTitle(deleteNoteRequest.getTitle());
-        if(notes == null)throw new NoteNotFoundException("Note not found");
-        else{
+        if (notes == null) throw new NoteNotFoundException("Note not found");
+        else {
             noteRepository.delete(notes);
         }
 
     }
 
     @Override
-    public UpdateNoteResponse updateNote(UpdateNotesRequest updateNoteRequest) {
-        Notes notes = noteRepository.findNotesById(updateNoteRequest.getId());
-        if (notes == null) throw new NoteNotFoundException("note not found");
-        if (notes.getTitle().equalsIgnoreCase(updateNoteRequest.getTitle() ) && notes.getContent().equalsIgnoreCase(updateNoteRequest.getContent()))
-            throw new NoteNotUpdatedException("note was not updated");
+    public Notes updateNote(UpdateNotesRequest updateNoteRequest, String id) {
+        Optional<Notes> notes = noteRepository.findById(id);
+        if (notes.isPresent()){
+            Notes notes1 = notes.get();
+            notes1.setTitle(updateNoteRequest.getTitle());
+            notes1.setContent(updateNoteRequest.getContent());
+            notes1.setDateAndTimeCreated(updateNoteRequest.getNewDateCreated());
+
+//            UpdateNoteResponse updateNoteResponse = new UpdateNoteResponse();
+//            updateNoteResponse.setMessage("note updated successfully");
+            return noteRepository.save(notes1);
+        }
         else {
-            if(notes.getId().equalsIgnoreCase(updateNoteRequest.getId()));
-            notes.setTitle(updateNoteRequest.getTitle());
-            notes.setContent(updateNoteRequest.getContent());
-            notes.setDateAndTimeCreated(updateNoteRequest.getNewDateCreated());
-            noteRepository.save(notes);
-            UpdateNoteResponse updateNoteResponse = new UpdateNoteResponse();
-            updateNoteResponse.setMessage("note updated successfully");
-            return updateNoteResponse;
+            throw new NoteNotFoundException("note not found");
         }
     }
+
+    @Override
+    public List<Notes> getAllNote() {
+        return noteRepository.findAll();
+    }
+
 }

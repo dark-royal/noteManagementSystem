@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.data.models.Notes;
 import org.example.data.repositories.NoteRepository;
 import org.example.dtos.request.CreateNoteRequest;
 import org.example.dtos.request.DeleteNoteRequest;
@@ -17,8 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class NoteServiceImplTest {
@@ -81,6 +81,27 @@ public class NoteServiceImplTest {
     @Test
     public void testThatNoteCanBeUpdated() {
         CreateNoteRequest createNoteRequest = new CreateNoteRequest();
+        createNoteRequest.setTitle("My next week");
+        createNoteRequest.setContent("I know tomorrow will be good and better");
+        createNoteRequest.setDateCreated(LocalDateTime.now());
+        CreateNoteResponse response = noteService.createNote(createNoteRequest);
+        assertThat(response.getMessage()).isNotNull();
+        assertEquals(1, noteService.findAll().size());
+
+        UpdateNotesRequest updateNotesRequest = new UpdateNotesRequest();
+        updateNotesRequest.setId(response.getId());
+        updateNotesRequest.setTitle("My tomorrow my life");
+        updateNotesRequest.setContent("i love this life");
+        Notes updateNoteResponse = noteService.updateNote(updateNotesRequest, response.getId());
+        assertNotNull(updateNoteResponse);
+//        assertThat(updateNoteResponse.getMessage()).isNotNull();
+        assertEquals(1,noteService.findAll().size());
+
+    }
+
+    @Test
+    public void testThatAllBookCanBeGotten(){
+        CreateNoteRequest createNoteRequest = new CreateNoteRequest();
         createNoteRequest.setTitle("My tomorrow");
         createNoteRequest.setContent("I know tomorrow will be good");
         createNoteRequest.setDateCreated(LocalDateTime.now());
@@ -88,12 +109,15 @@ public class NoteServiceImplTest {
         assertThat(response.getMessage()).isNotNull();
         assertEquals(1, noteService.findAll().size());
 
-        UpdateNotesRequest updateNotesRequest = new UpdateNotesRequest();
-        updateNotesRequest.setTitle("My tomorrow");
-        updateNotesRequest.setContent("i love this life");
-        UpdateNoteResponse updateNoteResponse = noteService.updateNote(updateNotesRequest);
-        assertThat(updateNoteResponse.getMessage()).isNotNull();
-        assertEquals(1,noteService.findAll().size());
+
+        CreateNoteRequest createNoteRequest1 = new CreateNoteRequest();
+        createNoteRequest1.setTitle("My today");
+        createNoteRequest1.setContent("today is my day");
+        createNoteRequest1.setDateCreated(LocalDateTime.now());
+        CreateNoteResponse response1 = noteService.createNote(createNoteRequest);
+        assertThat(response1.getMessage()).isNotNull();
+        assertEquals(1, noteService.findAll().size());
+        assertEquals(2,noteService.getAllNote().size());
 
     }
 
