@@ -4,6 +4,7 @@ import org.example.data.models.Notes;
 import org.example.data.repositories.NoteRepository;
 import org.example.dtos.request.CreateNoteRequest;
 import org.example.dtos.request.DeleteNoteRequest;
+import org.example.dtos.request.FindNoteRequest;
 import org.example.dtos.request.UpdateNotesRequest;
 import org.example.dtos.responses.CreateNoteResponse;
 import org.example.dtos.responses.UpdateNoteResponse;
@@ -92,9 +93,9 @@ public class NoteServiceImplTest {
         updateNotesRequest.setId(response.getId());
         updateNotesRequest.setTitle("My tomorrow my life");
         updateNotesRequest.setContent("i love this life");
-        Notes updateNoteResponse = noteService.updateNote(updateNotesRequest, response.getId());
+        UpdateNoteResponse updateNoteResponse = noteService.updateNote(updateNotesRequest, response.getId());
         assertNotNull(updateNoteResponse);
-//        assertThat(updateNoteResponse.getMessage()).isNotNull();
+        assertThat(updateNoteResponse.getMessage()).isNotNull();
         assertEquals(1,noteService.findAll().size());
 
     }
@@ -107,18 +108,41 @@ public class NoteServiceImplTest {
         createNoteRequest.setDateCreated(LocalDateTime.now());
         CreateNoteResponse response = noteService.createNote(createNoteRequest);
         assertThat(response.getMessage()).isNotNull();
-        assertEquals(1, noteService.findAll().size());
+
 
 
         CreateNoteRequest createNoteRequest1 = new CreateNoteRequest();
         createNoteRequest1.setTitle("My today");
         createNoteRequest1.setContent("today is my day");
         createNoteRequest1.setDateCreated(LocalDateTime.now());
-        CreateNoteResponse response1 = noteService.createNote(createNoteRequest);
+        CreateNoteResponse response1 = noteService.createNote(createNoteRequest1);
         assertThat(response1.getMessage()).isNotNull();
-        assertEquals(1, noteService.findAll().size());
         assertEquals(2,noteService.getAllNote().size());
 
+    }
+
+    @Test
+    public void testThatNoteCanBeFoundWhenCreated(){
+        CreateNoteRequest createNoteRequest = new CreateNoteRequest();
+        createNoteRequest.setTitle("semicolon");
+        createNoteRequest.setContent("I love semicolon");
+        createNoteRequest.setDateCreated(LocalDateTime.now());
+        CreateNoteResponse response = noteService.createNote(createNoteRequest);
+        assertThat(response.getMessage()).isNotNull();
+
+
+        CreateNoteRequest createNoteRequest1 = new CreateNoteRequest();
+        createNoteRequest1.setTitle("semicolon student");
+        createNoteRequest1.setContent("I love semicolon student");
+        createNoteRequest1.setDateCreated(LocalDateTime.now());
+        CreateNoteResponse response1 = noteService.createNote(createNoteRequest1);
+        assertThat(response1.getMessage()).isNotNull();
+        assertEquals(2,noteService.findAll().size());
+
+        FindNoteRequest findNoteRequest = new FindNoteRequest();
+        findNoteRequest.setTitle("semicolon");
+        Notes notes = noteService.findNote(findNoteRequest);
+        assertEquals("semicolon",notes.getTitle());
     }
 
 }

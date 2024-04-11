@@ -4,6 +4,7 @@ import org.example.data.models.Notes;
 import org.example.data.repositories.NoteRepository;
 import org.example.dtos.request.CreateNoteRequest;
 import org.example.dtos.request.DeleteNoteRequest;
+import org.example.dtos.request.FindNoteRequest;
 import org.example.dtos.request.UpdateNotesRequest;
 import org.example.dtos.responses.CreateNoteResponse;
 import org.example.dtos.responses.UpdateNoteResponse;
@@ -58,7 +59,7 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public Notes updateNote(UpdateNotesRequest updateNoteRequest, String id) {
+    public UpdateNoteResponse updateNote(UpdateNotesRequest updateNoteRequest, String id) {
         Optional<Notes> notes = noteRepository.findById(id);
         if (notes.isPresent()){
             Notes notes1 = notes.get();
@@ -66,9 +67,9 @@ public class NoteServiceImpl implements NoteService {
             notes1.setContent(updateNoteRequest.getContent());
             notes1.setDateAndTimeCreated(updateNoteRequest.getNewDateCreated());
 
-//            UpdateNoteResponse updateNoteResponse = new UpdateNoteResponse();
-//            updateNoteResponse.setMessage("note updated successfully");
-            return noteRepository.save(notes1);
+            UpdateNoteResponse updateNoteResponse = new UpdateNoteResponse();
+            updateNoteResponse.setMessage("note updated successfully");
+            return updateNoteResponse;
         }
         else {
             throw new NoteNotFoundException("note not found");
@@ -78,6 +79,16 @@ public class NoteServiceImpl implements NoteService {
     @Override
     public List<Notes> getAllNote() {
         return noteRepository.findAll();
+    }
+
+    @Override
+    public Notes findNote(FindNoteRequest findNoteRequest) {
+        Notes notes = noteRepository.findNotesByTitle(findNoteRequest.getTitle());
+        if(notes == null)throw new NoteNotFoundException("Note not found");
+        else {
+            return notes;
+        }
+
     }
 
 }
