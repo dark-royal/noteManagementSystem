@@ -90,6 +90,7 @@ public class NoteServiceImplTest {
         assertEquals(1, noteService.findAll().size());
 
         UpdateNotesRequest updateNotesRequest = new UpdateNotesRequest();
+        System.out.println("the response id ... "+response.getId());
         updateNotesRequest.setId(response.getId());
         updateNotesRequest.setTitle("My tomorrow my life");
         updateNotesRequest.setContent("i love this life");

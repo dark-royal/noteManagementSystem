@@ -30,10 +30,11 @@ public class NoteServiceImpl implements NoteService {
         note.setTitle(createNoteRequest.getTitle());
         note.setContent(createNoteRequest.getContent());
         note.setDateAndTimeCreated(createNoteRequest.getDateCreated());
-        noteRepository.save(note);
+        var savedNote = noteRepository.save(note);
 
         CreateNoteResponse createNoteResponse = new CreateNoteResponse();
         createNoteResponse.setMessage("create note successfully");
+        createNoteResponse.setId(savedNote.getId());
         return createNoteResponse;
     }
 
