@@ -1,7 +1,9 @@
 package org.example.services;
 
 import org.example.data.models.Notes;
+import org.example.data.models.Tags;
 import org.example.data.repositories.NoteRepository;
+import org.example.data.repositories.TagRepository;
 import org.example.dtos.request.CreateNoteRequest;
 import org.example.dtos.request.DeleteNoteRequest;
 import org.example.dtos.request.FindNoteRequest;
@@ -13,6 +15,7 @@ import org.example.exceptions.NoteNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +25,9 @@ public class NoteServiceImpl implements NoteService {
 
     @Autowired
     private NoteRepository noteRepository;
+    @Autowired
+    private TagRepository tagRepository;
+    private List<Tags> tagsList = new ArrayList<>();
 
     @Override
     public CreateNoteResponse createNote(CreateNoteRequest createNoteRequest) {
@@ -31,6 +37,13 @@ public class NoteServiceImpl implements NoteService {
         note.setContent(createNoteRequest.getContent());
         note.setDateAndTimeCreated(createNoteRequest.getDateCreated());
         var savedNote = noteRepository.save(note);
+
+        for(Tags tag : tagsList){
+            tag.setId(savedNote.getId());
+            tag.setName(tag.getName());
+
+        }
+        tagRepository.saveAll(tagsList);
 
         CreateNoteResponse createNoteResponse = new CreateNoteResponse();
         createNoteResponse.setMessage("create note successfully");
@@ -92,4 +105,35 @@ public class NoteServiceImpl implements NoteService {
 
     }
 
+    @Override
+    public List<Notes> findNoteByTagName(FindNoteRequest findNoteRequest) {
+        List<Notes> foundNotes = new ArrayList<>();
+        List<Notes> allNotes = noteRepository.findAll();
+        List<Tags> tagsList = getAllTags();
+
+        for (Notes note : allNotes) {
+            if (containsTagWithName(tagsList, findNoteRequest.getTagName())) {
+                foundNotes.add(note);
+            }
+        }
+
+        return foundNotes;
+    }
+
+    private List<Tags> getAllTags() {
+        return tagRepository.findAll();
+    }
+
+
+    private boolean containsTagWithName(List<Tags> tagsList, String tagName) {
+        for (Tags tag : tagsList) {
+            if (tag.getName().equals(tagName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
+
+
+

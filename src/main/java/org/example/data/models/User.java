@@ -9,7 +9,10 @@ public class User {
     private String username;
     private String email;
     private String password;
-    private String firstName;
-    private String lastName;
+    private String id;
+    private boolean loginStatus;
     private List<Notes> notesList;
+
+
+
 }

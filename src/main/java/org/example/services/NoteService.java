@@ -27,4 +27,6 @@ public interface NoteService {
 
     Notes findNote(FindNoteRequest findNoteRequest);
 
+    List<Notes> findNoteByTagName(FindNoteRequest findNoteRequest);
+
 }
