@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public CreateNoteResponse createNote(CreateNoteRequest createNoteRequest) {
-        validateLogin(createNoteRequest.getEmail());
+        //validateLogin(createNoteRequest.getEmail());
         validateCreateNote(createNoteRequest.getContent(), createNoteRequest.getTitle());
         Notes note = new Notes();
         note.setTitle(createNoteRequest.getTitle());
