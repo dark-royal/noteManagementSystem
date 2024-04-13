@@ -31,7 +31,7 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public CreateNoteResponse createNote(CreateNoteRequest createNoteRequest) {
-        validateCreateNote(createNoteRequest.getContent(), createNoteRequest.getTitle());
+        validateCreateNote(createNoteRequest.getTitle());
         Notes note = new Notes();
         note.setTitle(createNoteRequest.getTitle());
         note.setContent(createNoteRequest.getContent());
@@ -51,8 +51,8 @@ public class NoteServiceImpl implements NoteService {
         return createNoteResponse;
     }
 
-    private void validateCreateNote(String content, String title) {
-        Notes note = noteRepository.findByContentAndTitle(content, title);
+    private void validateCreateNote(String title) {
+        Notes note = noteRepository.findByTitle(title);
         if (note != null) throw new NoteAlreadyExistException("note exist already");
 
     }

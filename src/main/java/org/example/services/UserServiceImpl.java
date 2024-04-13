@@ -6,14 +6,8 @@ import org.example.data.models.User;
 import org.example.data.repositories.NoteRepository;
 import org.example.data.repositories.TagRepository;
 import org.example.data.repositories.UserRepository;
-import org.example.dtos.request.CreateNoteRequest;
-import org.example.dtos.request.LoginUserRequest;
-import org.example.dtos.request.LogoutUserRequest;
-import org.example.dtos.request.RegisterUserRequest;
-import org.example.dtos.responses.CreateNoteResponse;
-import org.example.dtos.responses.LoginUserResponse;
-import org.example.dtos.responses.LogoutUserResponse;
-import org.example.dtos.responses.RegisterUserResponse;
+import org.example.dtos.request.*;
+import org.example.dtos.responses.*;
 import org.example.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +20,8 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService{
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private NoteService noteService;
     private List<Notes>noteList = new ArrayList<>();
     @Autowired
     private NoteRepository noteRepository;
@@ -100,17 +96,14 @@ public class UserServiceImpl implements UserService{
     @Override
     public CreateNoteResponse createNote(CreateNoteRequest createNoteRequest) {
         //validateLogin(createNoteRequest.getEmail());
-        validateCreateNote(createNoteRequest.getContent(), createNoteRequest.getTitle());
+        validateCreateNote(createNoteRequest.getTitle());
         Notes note = new Notes();
         note.setTitle(createNoteRequest.getTitle());
         note.setContent(createNoteRequest.getContent());
         note.setDateAndTimeCreated(createNoteRequest.getDateCreated());
         var savedNote = noteRepository.save(note);
-        Tags tags = new Tags();
-            tags.setId(savedNote.getId());
-            tags.setName(tags.getName());
-            tagRepository.save(tags);
-            noteList.add(savedNote);
+
+
 
         CreateNoteResponse createNoteResponse = new CreateNoteResponse();
         createNoteResponse.setMessage("create note successfully");
@@ -118,8 +111,29 @@ public class UserServiceImpl implements UserService{
         return createNoteResponse;
     }
 
-    private void validateCreateNote(String content, String title) {
-        Notes note = noteRepository.findByContentAndTitle(content, title);
+    @Override
+    public DeleteNoteResponse deleteNote(DeleteNoteRequest deleteNoteRequest) {
+            Notes noteToDelete = noteRepository.findNotesByTitle(deleteNoteRequest.getTitle());
+
+            if (noteToDelete != null) {
+                noteRepository.delete(noteToDelete);
+                DeleteNoteResponse response = new DeleteNoteResponse();
+                response.setMessage("Deleted note successfully");
+                return response;
+            } else {
+
+                DeleteNoteResponse response = new DeleteNoteResponse();
+                response.setMessage("Note with title '" + deleteNoteRequest.getTitle() + "' not found");
+                return response;
+            }
+        }
+
+
+
+
+
+    private void validateCreateNote( String title) {
+        Notes note = noteRepository.findByTitle(title);
         if (note != null) throw new NoteAlreadyExistException("note exist already");
 
 
@@ -137,5 +151,8 @@ public class UserServiceImpl implements UserService{
         if(!user.isLoginStatus())throw new UserNotLoggedInException("Pls log in ");
 
     }
-
+    Tags tags = new Tags();
+        tags.setName(createNoteRequest.getTagName().getName());
+        tagRepository.save(tags);
+        noteList.add(savedNote);
 }

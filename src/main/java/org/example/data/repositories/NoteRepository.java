@@ -7,11 +7,13 @@ import java.util.Optional;
 
 public interface NoteRepository extends MongoRepository<Notes,String> {
 
-    Notes findByContentAndTitle(String content, String title);
+
 
 
     Notes findNotesByTitle(String title);
 
     Optional<Notes> findNotesById(String id);
 
+
+    Notes findByTitle(String title);
 }

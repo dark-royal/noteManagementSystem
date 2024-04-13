@@ -2,14 +2,8 @@ package org.example;
 
 import org.example.data.models.Notes;
 import org.example.data.models.Tags;
-import org.example.dtos.request.CreateNoteRequest;
-import org.example.dtos.request.LoginUserRequest;
-import org.example.dtos.request.LogoutUserRequest;
-import org.example.dtos.request.RegisterUserRequest;
-import org.example.dtos.responses.CreateNoteResponse;
-import org.example.dtos.responses.LoginUserResponse;
-import org.example.dtos.responses.LogoutUserResponse;
-import org.example.dtos.responses.RegisterUserResponse;
+import org.example.dtos.request.*;
+import org.example.dtos.responses.*;
 import org.example.exceptions.InvalidPasswordException;
 import org.example.exceptions.UserExistException;
 import org.example.exceptions.UserNotLoggedInException;
@@ -29,8 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserServiceImplTest {
     @Autowired
     private UserService userService;
-    private List<Notes> notesList;
-    private List<Tags> tagsList;
+
 
     @BeforeEach
     public void setUserService(){
@@ -156,9 +149,47 @@ public class UserServiceImplTest {
 
 
 
+    }
+
+    @Test
+    public void testThatNoteCanBeDeleted(){
+        RegisterUserRequest registerUserRequest = registerRequest("praise3@gmail.com","israel1","darkRoyal1");
+        RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
+        assertThat(registerUserResponse.getMessage()).isNotNull();
+        assertEquals(1,userService.findAllUser().size());
+
+        LoginUserRequest loginUserRequest = new LoginUserRequest();
+        loginUserRequest.setEmail(registerUserRequest.getEmail());
+        loginUserRequest.setPassword(registerUserRequest.getPassword());
+        LoginUserResponse response = userService.login(loginUserRequest);
+        assertThat(response.getMessage()).isNotNull();
+        assertTrue(userService.findUserById(registerUserResponse.getUserId()).isLoginStatus());
+
+        CreateNoteRequest createNoteRequest = new CreateNoteRequest();
+        createNoteRequest.setTitle("Precious1");
+        createNoteRequest.setContent("precious is a good girl i guess1");
+        createNoteRequest.setDateCreated(LocalDateTime.now());
+
+        Tags tags = new Tags();
+        tags.setName("work");
+        createNoteRequest.setTagName(tags);
+
+        CreateNoteResponse response1 = userService.createNote(createNoteRequest);
+        assertThat(response1.getMessage()).isNotNull();
+        assertEquals(1,userService.getAllNote().size());
+
+
+        DeleteNoteRequest deleteNoteRequest = new DeleteNoteRequest();
+        deleteNoteRequest.setTitle("praise");
+        DeleteNoteResponse response2 = userService.deleteNote(deleteNoteRequest);
+        assertThat(response2.getMessage()).isNotNull();
+        assertEquals(1,userService.getAllNote().size());
 
 
     }
+
+//    @Test
+//    public void testNoteCanBe
 
 
     public RegisterUserRequest registerRequest(String email, String password, String username){
