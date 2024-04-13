@@ -49,8 +49,7 @@ public class NoteServiceImplTest {
 
         Tags tags = new Tags();
         tags.setName("work");
-        tagsList.add(tags);
-        createNoteRequest.setTagsList(tagsList);
+        createNoteRequest.setTagName(tags);
 
         noteService.createNote(createNoteRequest);
         assertEquals(1,noteService.findAll().size());
@@ -65,8 +64,7 @@ public class NoteServiceImplTest {
 
         Tags tags = new Tags();
         tags.setName("personal");
-        tagsList.add(tags);
-        createNoteRequest.setTagsList(tagsList);
+        createNoteRequest.setTagName(tags);
 
         CreateNoteResponse response = noteService.createNote(createNoteRequest);
         assertThat(response.getMessage()).isNotNull();
@@ -83,8 +81,7 @@ public class NoteServiceImplTest {
 
         Tags tags = new Tags();
         tags.setName("personal");
-        tagsList.add(tags);
-        createNoteRequest.setTagsList(tagsList);
+        createNoteRequest.setTagName(tags);
 
         noteService.createNote(createNoteRequest);
         assertEquals(1,noteService.findAll().size());
@@ -112,8 +109,7 @@ public class NoteServiceImplTest {
 
         Tags tags = new Tags();
         tags.setName("Nxt week plan");
-        tagsList.add(tags);
-        createNoteRequest.setTagsList(tagsList);
+        createNoteRequest.setTagName(tags);
 
         CreateNoteResponse response = noteService.createNote(createNoteRequest);
         assertThat(response.getMessage()).isNotNull();
@@ -140,8 +136,7 @@ public class NoteServiceImplTest {
 
         Tags tags = new Tags();
         tags.setName("work");
-        tagsList.add(tags);
-        createNoteRequest.setTagsList(tagsList);
+        createNoteRequest.setTagName(tags);
 
         CreateNoteResponse response = noteService.createNote(createNoteRequest);
         assertThat(response.getMessage()).isNotNull();
@@ -155,8 +150,7 @@ public class NoteServiceImplTest {
 
         Tags tags1 = new Tags();
         tags1.setName("work");
-        tagsList.add(tags1);
-        createNoteRequest.setTagsList(tagsList);
+        createNoteRequest.setTagName(tags);
 
         CreateNoteResponse response1 = noteService.createNote(createNoteRequest1);
         assertThat(response1.getMessage()).isNotNull();
@@ -172,9 +166,8 @@ public class NoteServiceImplTest {
         createNoteRequest.setDateCreated(LocalDateTime.now());
 
         Tags tags = new Tags();
-        tags.setName("work");
-        tagsList.add(tags);
-        createNoteRequest.setTagsList(tagsList);
+        tags.setName("work1");
+        createNoteRequest.setTagName(tags);
 
         CreateNoteResponse response = noteService.createNote(createNoteRequest);
         assertThat(response.getMessage()).isNotNull();
@@ -187,8 +180,7 @@ public class NoteServiceImplTest {
 
         Tags tags1 = new Tags();
         tags1.setName("work");
-        tagsList.add(tags1);
-        createNoteRequest.setTagsList(tagsList);
+        createNoteRequest.setTagName(tags);
 
         CreateNoteResponse response1 = noteService.createNote(createNoteRequest1);
         assertThat(response1.getMessage()).isNotNull();

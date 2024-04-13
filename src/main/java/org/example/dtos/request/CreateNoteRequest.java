@@ -2,6 +2,7 @@ package org.example.dtos.request;
 
 import lombok.Data;
 import org.example.data.models.Tags;
+import org.example.data.models.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,5 +13,8 @@ public class CreateNoteRequest {
     private String title;
     private String content;
     private LocalDateTime dateCreated;
-    private List<Tags>tagsList;
+    private Tags tagName;
+    private String email;
+
+
 }

@@ -11,5 +11,5 @@ public class Notes {
     private String title;
     private String content;
     private LocalDateTime dateAndTimeCreated;
-    private List<Tags> tagsList;
+    private Tags tags;
 }

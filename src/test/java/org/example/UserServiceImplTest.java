@@ -6,11 +6,13 @@ import org.example.dtos.request.CreateNoteRequest;
 import org.example.dtos.request.LoginUserRequest;
 import org.example.dtos.request.LogoutUserRequest;
 import org.example.dtos.request.RegisterUserRequest;
+import org.example.dtos.responses.CreateNoteResponse;
 import org.example.dtos.responses.LoginUserResponse;
 import org.example.dtos.responses.LogoutUserResponse;
 import org.example.dtos.responses.RegisterUserResponse;
 import org.example.exceptions.InvalidPasswordException;
 import org.example.exceptions.UserExistException;
+import org.example.exceptions.UserNotLoggedInException;
 import org.example.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,7 @@ public class UserServiceImplTest {
     @Autowired
     private UserService userService;
     private List<Notes> notesList;
+    private List<Tags> tagsList;
 
     @BeforeEach
     public void setUserService(){
@@ -109,6 +112,19 @@ public class UserServiceImplTest {
 
     }
 
+    @Test
+    public void testUserCannotLogout_without_loggingIn(){
+        RegisterUserRequest registerUserRequest = registerRequest("praise3@gmail.com","israel1","darkRoyal1");
+        RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
+        assertThat(registerUserResponse.getMessage()).isNotNull();
+        assertEquals(1,userService.findAllUser().size());
+
+        LogoutUserRequest logoutUserRequest = new LogoutUserRequest();
+        logoutUserRequest.setEmail(registerUserRequest.getEmail());
+        assertThrows(UserNotLoggedInException.class,()->userService.logout(logoutUserRequest));
+
+    }
+
 
     @Test
     public void testThatUserCanCreateNote(){
@@ -119,20 +135,29 @@ public class UserServiceImplTest {
 
         LoginUserRequest loginUserRequest = new LoginUserRequest();
         loginUserRequest.setEmail(registerUserRequest.getEmail());
-        loginUserRequest.setPassword("praise");
-        assertThrows(InvalidPasswordException.class,()->userService.login(loginUserRequest));
+        loginUserRequest.setPassword(registerUserRequest.getPassword());
+        LoginUserResponse response = userService.login(loginUserRequest);
+        assertThat(response.getMessage()).isNotNull();
+        assertTrue(userService.findUserById(registerUserResponse.getUserId()).isLoginStatus());
 
         CreateNoteRequest createNoteRequest = new CreateNoteRequest();
         createNoteRequest.setTitle("Precious");
         createNoteRequest.setContent("precious is a good girl i guess");
         createNoteRequest.setDateCreated(LocalDateTime.now());
 
-            Tags tags = new Tags();
-            tags.setName("work");
-            notesList.add(tags);
-            createNoteRequest.setTagsList(notesList);
+        Tags tags = new Tags();
+        tags.setName("work");
+        createNoteRequest.setTagName(tags);
 
-             
+
+        CreateNoteResponse createNoteResponse = userService.createNote(createNoteRequest);
+        assertThat(createNoteResponse.getMessage()).isNotNull();
+        assertEquals(1,userService.getAllNote().size());
+
+
+
+
+
     }
 
 

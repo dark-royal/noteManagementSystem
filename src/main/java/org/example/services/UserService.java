@@ -1,9 +1,11 @@
 package org.example.services;
 
 import org.example.data.models.User;
+import org.example.dtos.request.CreateNoteRequest;
 import org.example.dtos.request.LoginUserRequest;
 import org.example.dtos.request.LogoutUserRequest;
 import org.example.dtos.request.RegisterUserRequest;
+import org.example.dtos.responses.CreateNoteResponse;
 import org.example.dtos.responses.LoginUserResponse;
 import org.example.dtos.responses.LogoutUserResponse;
 import org.example.dtos.responses.RegisterUserResponse;
@@ -24,5 +26,9 @@ public interface UserService {
     User findUserById(String id);
 
     LogoutUserResponse logout(LogoutUserRequest logoutUserRequest);
+
+    List<User> getAllNote();
+
+    CreateNoteResponse createNote(CreateNoteRequest createNoteRequest);
 
 }
