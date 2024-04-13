@@ -108,11 +108,12 @@ public class NoteServiceImpl implements NoteService {
     @Override
     public List<Notes> findNoteByTagName(FindNoteRequest findNoteRequest) {
         List<Notes> foundNotes = new ArrayList<>();
-        List<Notes> allNotes = noteRepository.findAll();
         List<Tags> tagsList = getAllTags();
 
-        for (Notes note : allNotes) {
-            if (containsTagWithName(tagsList, findNoteRequest.getTagName())) {
+        for (Notes note : noteRepository.findAll()) {
+            boolean containsTag = containsTagWithName(tagsList, findNoteRequest.getTagName());
+
+            if (containsTag) {
                 foundNotes.add(note);
             }
         }

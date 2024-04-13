@@ -1,5 +1,7 @@
 package org.example.services;
 
+import org.example.data.models.Notes;
+import org.example.data.models.Tags;
 import org.example.data.models.User;
 import org.example.dtos.request.*;
 import org.example.dtos.responses.*;
@@ -23,8 +25,12 @@ public interface UserService {
 
     List<User> getAllNote();
 
+    List<Tags> getAllTags();
+
     CreateNoteResponse createNote(CreateNoteRequest createNoteRequest);
 
     DeleteNoteResponse deleteNote(DeleteNoteRequest deleteNoteRequest);
+
+    List<Notes> findNoteByTagName(FindNoteRequest findNoteRequest);
 
 }

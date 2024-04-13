@@ -92,24 +92,45 @@ public class UserServiceImpl implements UserService{
     public List<User> getAllNote() {
         return userRepository.findAll();
     }
+    @Override
+    public List<Tags> getAllTags() {
+        return tagRepository.findAll();
+    }
+
+
 
     @Override
     public CreateNoteResponse createNote(CreateNoteRequest createNoteRequest) {
         //validateLogin(createNoteRequest.getEmail());
-        validateCreateNote(createNoteRequest.getTitle());
-        Notes note = new Notes();
-        note.setTitle(createNoteRequest.getTitle());
-        note.setContent(createNoteRequest.getContent());
-        note.setDateAndTimeCreated(createNoteRequest.getDateCreated());
-        var savedNote = noteRepository.save(note);
+
+            String noteTitle = createNoteRequest.getTitle();
+            Notes existingNote = noteRepository.findNotesByTitle(noteTitle);
+            if (existingNote != null) {
+
+                CreateNoteResponse errorResponse = new CreateNoteResponse();
+                errorResponse.setMessage("note exist already");
+                return errorResponse;
+            }
 
 
+            Notes note = new Notes();
+            note.setTitle(noteTitle);
+            note.setContent(createNoteRequest.getContent());
+            note.setDateAndTimeCreated(createNoteRequest.getDateCreated());
+            Notes savedNote = noteRepository.save(note);
 
-        CreateNoteResponse createNoteResponse = new CreateNoteResponse();
-        createNoteResponse.setMessage("create note successfully");
-        createNoteResponse.setId(savedNote.getId());
-        return createNoteResponse;
-    }
+            Tags tags = new Tags();
+            tags.setName(createNoteRequest.getTagName().getName());
+            tagRepository.save(tags);
+            noteList.add(savedNote);
+
+            CreateNoteResponse createNoteResponse = new CreateNoteResponse();
+            createNoteResponse.setMessage("Create note successfully");
+            createNoteResponse.setId(savedNote.getId());
+            return createNoteResponse;
+        }
+
+
 
     @Override
     public DeleteNoteResponse deleteNote(DeleteNoteRequest deleteNoteRequest) {
@@ -127,6 +148,40 @@ public class UserServiceImpl implements UserService{
                 return response;
             }
         }
+
+    @Override
+    public List<Notes> findNoteByTagName(FindNoteRequest findNoteRequest) {
+        List<Notes> foundNotes = new ArrayList<>();
+        List<Tags> tagsList = getAllTags();
+
+        for (Notes note : noteRepository.findAll()) {
+            boolean containsTag = false;
+            for (Tags tag : tagsList) {
+                if (tag.getName() != null && tag.getName().equals(findNoteRequest.getTagName())) {
+                    containsTag = true;
+                    break;
+                }
+            }
+
+            if (containsTag) {
+                foundNotes.add(note);
+            }
+        }
+        return foundNotes;
+    }
+
+
+
+
+    private boolean containsTagWithName(List<Tags> tagsList, String tagName) {
+        for (Tags tag : tagsList) {
+            if (tag.getName().equals(tagName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 
 
@@ -151,8 +206,5 @@ public class UserServiceImpl implements UserService{
         if(!user.isLoginStatus())throw new UserNotLoggedInException("Pls log in ");
 
     }
-    Tags tags = new Tags();
-        tags.setName(createNoteRequest.getTagName().getName());
-        tagRepository.save(tags);
-        noteList.add(savedNote);
+
 }

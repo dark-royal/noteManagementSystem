@@ -166,12 +166,12 @@ public class UserServiceImplTest {
         assertTrue(userService.findUserById(registerUserResponse.getUserId()).isLoginStatus());
 
         CreateNoteRequest createNoteRequest = new CreateNoteRequest();
-        createNoteRequest.setTitle("Precious1");
-        createNoteRequest.setContent("precious is a good girl i guess1");
+        createNoteRequest.setTitle("heritage");
+        createNoteRequest.setContent("heritage is a good girl i guess1");
         createNoteRequest.setDateCreated(LocalDateTime.now());
 
         Tags tags = new Tags();
-        tags.setName("work");
+        tags.setName("personal");
         createNoteRequest.setTagName(tags);
 
         CreateNoteResponse response1 = userService.createNote(createNoteRequest);
@@ -188,8 +188,68 @@ public class UserServiceImplTest {
 
     }
 
-//    @Test
-//    public void testNoteCanBe
+    @Test
+    public void testNoteCanBeFound(){
+        RegisterUserRequest registerUserRequest = registerRequest("praise3@gmail.com","israel1","darkRoyal1");
+        RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
+        assertThat(registerUserResponse.getMessage()).isNotNull();
+        assertEquals(1,userService.findAllUser().size());
+
+        LoginUserRequest loginUserRequest = new LoginUserRequest();
+        loginUserRequest.setEmail(registerUserRequest.getEmail());
+        loginUserRequest.setPassword(registerUserRequest.getPassword());
+        LoginUserResponse response = userService.login(loginUserRequest);
+        assertThat(response.getMessage()).isNotNull();
+        assertTrue(userService.findUserById(registerUserResponse.getUserId()).isLoginStatus());
+
+        CreateNoteRequest createNoteRequest = new CreateNoteRequest();
+        createNoteRequest.setTitle("gideon");
+        createNoteRequest.setContent("gideon is a good boy i guess1");
+        createNoteRequest.setDateCreated(LocalDateTime.now());
+
+        Tags tags = new Tags();
+        tags.setName("personally");
+        createNoteRequest.setTagName(tags);
+
+        CreateNoteResponse response1 = userService.createNote(createNoteRequest);
+        assertThat(response1.getMessage()).isNotNull();
+        assertEquals(1,userService.getAllNote().size());
+
+
+        CreateNoteRequest createNoteRequest1 = new CreateNoteRequest();
+        createNoteRequest1.setTitle("heritage");
+        createNoteRequest1.setContent("heritage is a good girl i guess1");
+        createNoteRequest1.setDateCreated(LocalDateTime.now());
+
+        Tags tags1 = new Tags();
+        tags1.setName("personally");
+        createNoteRequest1.setTagName(tags1);
+
+        CreateNoteResponse response11 = userService.createNote(createNoteRequest1);
+        assertThat(response11.getMessage()).isNotNull();
+        assertEquals(1,userService.getAllNote().size());
+
+
+        CreateNoteRequest createNoteRequest2 = new CreateNoteRequest();
+        createNoteRequest2.setTitle("micheal");
+        createNoteRequest2.setContent("michael is a bad boy");
+        createNoteRequest2.setDateCreated(LocalDateTime.now());
+
+        Tags tags2 = new Tags();
+        tags2.setName("personally");
+        createNoteRequest2.setTagName(tags2);
+
+        CreateNoteResponse response12 = userService.createNote(createNoteRequest2);
+        assertThat(response12.getMessage()).isNotNull();
+        assertEquals(1,userService.getAllNote().size());
+
+        FindNoteRequest findNoteRequest = new FindNoteRequest();
+        findNoteRequest.setTagName("personally");
+        List<Notes> notes = userService.findNoteByTagName(findNoteRequest);
+        System.out.println(notes);
+        assertEquals("gideon",notes.getFirst().getTitle());
+
+    }
 
 
     public RegisterUserRequest registerRequest(String email, String password, String username){
