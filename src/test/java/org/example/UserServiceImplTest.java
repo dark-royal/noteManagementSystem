@@ -26,36 +26,36 @@ public class UserServiceImplTest {
 
 
     @BeforeEach
-    public void setUserService(){
+    public void setUserService() {
         userService.deleteAll();
     }
 
     @Test
-    public void testUserCanRegister(){
-        RegisterUserRequest registerUserRequest = registerRequest("praise@gmail.com","israel","darkRoyal");
+    public void testUserCanRegister() {
+        RegisterUserRequest registerUserRequest = registerRequest("praise@gmail.com", "israel", "darkRoyal");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
-        assertEquals(1,userService.findAllUser().size());
+        assertEquals(1, userService.findAllUser().size());
 
 
     }
 
     @Test
-    public void testThatUserCannotBeRegisterWithTheSameDetails_throwUserExistException(){
-        RegisterUserRequest registerUserRequest = registerRequest("praise1@gmail.com","israel","darkRoyal");
+    public void testThatUserCannotBeRegisterWithTheSameDetails_throwUserExistException() {
+        RegisterUserRequest registerUserRequest = registerRequest("praise1@gmail.com", "israel", "darkRoyal");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
-        assertEquals(1,userService.findAllUser().size());
+        assertEquals(1, userService.findAllUser().size());
 
-        assertThrows(UserExistException.class,()->userService.register(registerUserRequest));
+        assertThrows(UserExistException.class, () -> userService.register(registerUserRequest));
     }
 
     @Test
-    public void testThatUserCanRegister_login(){
-        RegisterUserRequest registerUserRequest = registerRequest("praise2@gmail.com","israel","darkRoyal");
+    public void testThatUserCanRegister_login() {
+        RegisterUserRequest registerUserRequest = registerRequest("praise2@gmail.com", "israel", "darkRoyal");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
-        assertEquals(1,userService.findAllUser().size());
+        assertEquals(1, userService.findAllUser().size());
 
         LoginUserRequest loginUserRequest = new LoginUserRequest();
         loginUserRequest.setEmail(registerUserRequest.getEmail());
@@ -68,11 +68,11 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void register_login_logout(){
-        RegisterUserRequest registerUserRequest = registerRequest("praise3@gmail.com","israel1","darkRoyal1");
+    public void register_login_logout() {
+        RegisterUserRequest registerUserRequest = registerRequest("praise3@gmail.com", "israel1", "darkRoyal1");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
-        assertEquals(1,userService.findAllUser().size());
+        assertEquals(1, userService.findAllUser().size());
 
         LoginUserRequest loginUserRequest = new LoginUserRequest();
         loginUserRequest.setEmail(registerUserRequest.getEmail());
@@ -91,40 +91,40 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void testThatUserCannotLoginWithIncorrectDetails(){
-        RegisterUserRequest registerUserRequest = registerRequest("praise3@gmail.com","israel1","darkRoyal1");
+    public void testThatUserCannotLoginWithIncorrectDetails() {
+        RegisterUserRequest registerUserRequest = registerRequest("praise3@gmail.com", "israel1", "darkRoyal1");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
-        assertEquals(1,userService.findAllUser().size());
+        assertEquals(1, userService.findAllUser().size());
 
         LoginUserRequest loginUserRequest = new LoginUserRequest();
         loginUserRequest.setEmail(registerUserRequest.getEmail());
         loginUserRequest.setPassword("praise");
-        assertThrows(InvalidPasswordException.class,()->userService.login(loginUserRequest));
+        assertThrows(InvalidPasswordException.class, () -> userService.login(loginUserRequest));
 
 
     }
 
     @Test
-    public void testUserCannotLogout_without_loggingIn(){
-        RegisterUserRequest registerUserRequest = registerRequest("praise3@gmail.com","israel1","darkRoyal1");
+    public void testUserCannotLogout_without_loggingIn() {
+        RegisterUserRequest registerUserRequest = registerRequest("praise3@gmail.com", "israel1", "darkRoyal1");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
-        assertEquals(1,userService.findAllUser().size());
+        assertEquals(1, userService.findAllUser().size());
 
         LogoutUserRequest logoutUserRequest = new LogoutUserRequest();
         logoutUserRequest.setEmail(registerUserRequest.getEmail());
-        assertThrows(UserNotLoggedInException.class,()->userService.logout(logoutUserRequest));
+        assertThrows(UserNotLoggedInException.class, () -> userService.logout(logoutUserRequest));
 
     }
 
 
     @Test
-    public void testThatUserCanCreateNote(){
-        RegisterUserRequest registerUserRequest = registerRequest("praise3@gmail.com","israel1","darkRoyal1");
+    public void testThatUserCanCreateNote() {
+        RegisterUserRequest registerUserRequest = registerRequest("praise3@gmail.com", "israel1", "darkRoyal1");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
-        assertEquals(1,userService.findAllUser().size());
+        assertEquals(1, userService.findAllUser().size());
 
         LoginUserRequest loginUserRequest = new LoginUserRequest();
         loginUserRequest.setEmail(registerUserRequest.getEmail());
@@ -145,18 +145,17 @@ public class UserServiceImplTest {
 
         CreateNoteResponse createNoteResponse = userService.createNote(createNoteRequest);
         assertThat(createNoteResponse.getMessage()).isNotNull();
-        assertEquals(1,userService.getAllNote().size());
-
+        assertEquals(1, userService.getAllNote().size());
 
 
     }
 
     @Test
-    public void testThatNoteCanBeDeleted(){
-        RegisterUserRequest registerUserRequest = registerRequest("praise3@gmail.com","israel1","darkRoyal1");
+    public void testThatNoteCanBeDeleted() {
+        RegisterUserRequest registerUserRequest = registerRequest("praise3@gmail.com", "israel1", "darkRoyal1");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
-        assertEquals(1,userService.findAllUser().size());
+        assertEquals(1, userService.findAllUser().size());
 
         LoginUserRequest loginUserRequest = new LoginUserRequest();
         loginUserRequest.setEmail(registerUserRequest.getEmail());
@@ -176,24 +175,24 @@ public class UserServiceImplTest {
 
         CreateNoteResponse response1 = userService.createNote(createNoteRequest);
         assertThat(response1.getMessage()).isNotNull();
-        assertEquals(1,userService.getAllNote().size());
+        assertEquals(1, userService.getAllNote().size());
 
 
         DeleteNoteRequest deleteNoteRequest = new DeleteNoteRequest();
         deleteNoteRequest.setTitle("praise");
         DeleteNoteResponse response2 = userService.deleteNote(deleteNoteRequest);
         assertThat(response2.getMessage()).isNotNull();
-        assertEquals(1,userService.getAllNote().size());
+        assertEquals(1, userService.getAllNote().size());
 
 
     }
 
     @Test
-    public void testNoteCanBeFound(){
-        RegisterUserRequest registerUserRequest = registerRequest("praise3@gmail.com","israel1","darkRoyal1");
+    public void testNoteCanBeFound() {
+        RegisterUserRequest registerUserRequest = registerRequest("praise3@gmail.com", "israel1", "darkRoyal1");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
-        assertEquals(1,userService.findAllUser().size());
+        assertEquals(1, userService.findAllUser().size());
 
         LoginUserRequest loginUserRequest = new LoginUserRequest();
         loginUserRequest.setEmail(registerUserRequest.getEmail());
@@ -203,7 +202,7 @@ public class UserServiceImplTest {
         assertTrue(userService.findUserById(registerUserResponse.getUserId()).isLoginStatus());
 
         CreateNoteRequest createNoteRequest = new CreateNoteRequest();
-        createNoteRequest.setTitle("gideon");
+        createNoteRequest.setTitle("heritage");
         createNoteRequest.setContent("gideon is a good boy i guess1");
         createNoteRequest.setDateCreated(LocalDateTime.now());
 
@@ -213,12 +212,12 @@ public class UserServiceImplTest {
 
         CreateNoteResponse response1 = userService.createNote(createNoteRequest);
         assertThat(response1.getMessage()).isNotNull();
-        assertEquals(1,userService.getAllNote().size());
+        assertEquals(1, userService.getAllNote().size());
 
 
         CreateNoteRequest createNoteRequest1 = new CreateNoteRequest();
-        createNoteRequest1.setTitle("heritage");
-        createNoteRequest1.setContent("heritage is a good girl i guess1");
+        createNoteRequest1.setTitle("gideon");
+        createNoteRequest1.setContent("gideon is a good girl i guess1");
         createNoteRequest1.setDateCreated(LocalDateTime.now());
 
         Tags tags1 = new Tags();
@@ -227,7 +226,7 @@ public class UserServiceImplTest {
 
         CreateNoteResponse response11 = userService.createNote(createNoteRequest1);
         assertThat(response11.getMessage()).isNotNull();
-        assertEquals(1,userService.getAllNote().size());
+        assertEquals(1, userService.getAllNote().size());
 
 
         CreateNoteRequest createNoteRequest2 = new CreateNoteRequest();
@@ -241,18 +240,64 @@ public class UserServiceImplTest {
 
         CreateNoteResponse response12 = userService.createNote(createNoteRequest2);
         assertThat(response12.getMessage()).isNotNull();
-        assertEquals(1,userService.getAllNote().size());
+        assertEquals(1, userService.getAllNote().size());
 
         FindNoteRequest findNoteRequest = new FindNoteRequest();
         findNoteRequest.setTagName("personally");
         List<Notes> notes = userService.findNoteByTagName(findNoteRequest);
         System.out.println(notes);
-        assertEquals("gideon",notes.getFirst().getTitle());
+        assertEquals("heritage", notes.getFirst().getTitle());
 
     }
 
 
-    public RegisterUserRequest registerRequest(String email, String password, String username){
+
+
+
+    @Test
+    public void testThatNoteCanBeUpdated() {
+
+        RegisterUserRequest registerUserRequest = registerRequest("praise3@gmail.com", "israel1", "darkRoyal1");
+        RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
+        assertThat(registerUserResponse.getMessage()).isNotNull();
+        assertEquals(1, userService.findAllUser().size());
+
+        LoginUserRequest loginUserRequest = new LoginUserRequest();
+        loginUserRequest.setEmail(registerUserRequest.getEmail());
+        loginUserRequest.setPassword(registerUserRequest.getPassword());
+        LoginUserResponse response = userService.login(loginUserRequest);
+        assertThat(response.getMessage()).isNotNull();
+        assertTrue(userService.findUserById(registerUserResponse.getUserId()).isLoginStatus());
+
+
+
+        CreateNoteRequest createNoteRequest = new CreateNoteRequest();
+        createNoteRequest.setTitle("My next week");
+        createNoteRequest.setContent("I know tomorrow will be good and better");
+        createNoteRequest.setDateCreated(LocalDateTime.now());
+
+        Tags tags = new Tags();
+        tags.setName("Nxt week plan");
+        createNoteRequest.setTagName(tags);
+
+        CreateNoteResponse response1 = userService.createNote(createNoteRequest);
+        assertThat(response.getMessage()).isNotNull();
+        assertEquals(1, userService.getAllNote().size());
+
+        UpdateNotesRequest updateNotesRequest = new UpdateNotesRequest();
+        System.out.println("the response id ... " + response1.getId());
+        updateNotesRequest.setId(response1.getId());
+        updateNotesRequest.setTitle("My tomorrow my life1");
+        updateNotesRequest.setContent("i love this life1");
+        UpdateNoteResponse updateNoteResponse = userService.updateNote(updateNotesRequest);
+        assertNotNull(updateNoteResponse);
+        assertThat(updateNoteResponse.getMessage()).isNotNull();
+        assertEquals(1, userService.getAllNote().size());
+
+    }
+
+
+    public RegisterUserRequest registerRequest(String email, String password, String username) {
         return RegisterUserRequest.builder()
                 .email(email)
                 .password(password)
@@ -260,6 +305,5 @@ public class UserServiceImplTest {
                 .build();
     }
 
-
-
 }
+

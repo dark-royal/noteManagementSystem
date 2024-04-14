@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.example.services.UserServiceImpl.getUpdateNoteResponse;
+
 @Service
 
 public class NoteServiceImpl implements NoteService {
@@ -75,19 +77,7 @@ public class NoteServiceImpl implements NoteService {
     @Override
     public UpdateNoteResponse updateNote(UpdateNotesRequest updateNoteRequest, String id) {
         Optional<Notes> notes = noteRepository.findById(id);
-        if (notes.isPresent()){
-            Notes notes1 = notes.get();
-            notes1.setTitle(updateNoteRequest.getTitle());
-            notes1.setContent(updateNoteRequest.getContent());
-            notes1.setDateAndTimeCreated(updateNoteRequest.getNewDateCreated());
-
-            UpdateNoteResponse updateNoteResponse = new UpdateNoteResponse();
-            updateNoteResponse.setMessage("note updated successfully");
-            return updateNoteResponse;
-        }
-        else {
-            throw new NoteNotFoundException("note not found");
-        }
+        return getUpdateNoteResponse(updateNoteRequest, notes);
     }
 
     @Override

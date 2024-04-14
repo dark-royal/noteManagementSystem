@@ -33,4 +33,5 @@ public interface UserService {
 
     List<Notes> findNoteByTagName(FindNoteRequest findNoteRequest);
 
+    UpdateNoteResponse updateNote(UpdateNotesRequest updateNotesRequest);
 }

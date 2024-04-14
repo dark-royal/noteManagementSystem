@@ -1,6 +1,7 @@
 package org.example.data.models;
 
 import lombok.Data;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ public class User {
     private String password;
     private String id;
     private boolean loginStatus;
+    @DBRef
     private List<Notes> notesList;
 
 

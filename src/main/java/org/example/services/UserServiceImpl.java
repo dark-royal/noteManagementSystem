@@ -171,28 +171,35 @@ public class UserServiceImpl implements UserService{
     }
 
 
+    @Override
+    public UpdateNoteResponse updateNote(UpdateNotesRequest updateNotesRequest){
+        Optional<Notes> notes = noteRepository.findById(updateNotesRequest.getId());
+        return getUpdateNoteResponse(updateNotesRequest, notes);
+    }
 
+    public static UpdateNoteResponse getUpdateNoteResponse(UpdateNotesRequest updateNotesRequest, Optional<Notes> notes) {
+        if (notes.isPresent()){
+            Notes notes1 = notes.get();
+            notes1.setTitle(updateNotesRequest.getTitle());
+            notes1.setContent(updateNotesRequest.getContent());
+            notes1.setDateAndTimeCreated(updateNotesRequest.getNewDateCreated());
 
-    private boolean containsTagWithName(List<Tags> tagsList, String tagName) {
-        for (Tags tag : tagsList) {
-            if (tag.getName().equals(tagName)) {
-                return true;
-            }
+            UpdateNoteResponse updateNoteResponse = new UpdateNoteResponse();
+            updateNoteResponse.setMessage("note updated successfully");
+            return updateNoteResponse;
         }
-        return false;
+        else {
+            throw new NoteNotFoundException("note not found");
+        }
     }
 
 
-
-
-
-
-    private void validateCreateNote( String title) {
-        Notes note = noteRepository.findByTitle(title);
-        if (note != null) throw new NoteAlreadyExistException("note exist already");
-
-
-    }
+//    private void validateCreateNote( String title) {
+//        Notes note = noteRepository.findByTitle(title);
+//        if (note != null) throw new NoteAlreadyExistException("note exist already");
+//
+//
+//    }
 
 
     public void validateUser(String email){
