@@ -5,4 +5,5 @@ import lombok.Data;
 @Data
 public class LoginUserResponse {
     private String message;
+    private boolean loginStatus;
 }

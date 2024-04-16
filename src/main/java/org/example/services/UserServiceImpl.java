@@ -1,5 +1,6 @@
 package org.example.services;
 
+import lombok.RequiredArgsConstructor;
 import org.example.data.models.Notes;
 import org.example.data.models.Tags;
 import org.example.data.models.User;
@@ -12,11 +13,14 @@ import org.example.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+
 public class UserServiceImpl implements UserService{
     @Autowired
     private UserRepository userRepository;
@@ -42,7 +46,9 @@ public class UserServiceImpl implements UserService{
         var savedUser = userRepository.save(user);
 
         RegisterUserResponse response = new RegisterUserResponse();
-        response.setMessage("registered successfully");
+        response.setMessage("Registered successfully");
+        response.setEmail(registerUserRequest.getEmail());
+        response.setUsername(registerUserRequest.getUsername());
         response.setUserId(savedUser.getId());
         return response;
     }
@@ -54,21 +60,23 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public LoginUserResponse login(LoginUserRequest loginUserRequest) {
-        User user = userRepository.findUserByEmail(loginUserRequest.getEmail()).orElseThrow(()-> new UserNotFoundException("User not found"));
-            if(user.getPassword().equalsIgnoreCase(loginUserRequest.getPassword())) {
-                user.setLoginStatus(true);
-                userRepository.save(user);
-                LoginUserResponse loginUserResponse = new LoginUserResponse();
-                loginUserResponse.setMessage("login successfully");
-                return loginUserResponse;
-            }
-        else{
-            throw new InvalidPasswordException("invalid password");
+
+        User user = userRepository.findUserByEmail(loginUserRequest.getEmail())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if (!user.getPassword().equals(loginUserRequest.getPassword())) {
+            throw new InvalidPasswordException("Invalid password");
         }
 
+        user.setLoginStatus(true);
+        userRepository.save(user);
 
+        LoginUserResponse loginUserResponse = new LoginUserResponse();
+        loginUserResponse.setMessage("Login successful");
+        loginUserResponse.setLoginStatus(loginUserRequest.isLogStatus());
+        return loginUserResponse;
+    }
 
-        }
 
 
 
@@ -84,7 +92,7 @@ public class UserServiceImpl implements UserService{
             user.setLoginStatus(false);
             userRepository.save(user);
             LogoutUserResponse logoutUserResponse = new LogoutUserResponse();
-            logoutUserResponse.setMessage("login successfully");
+            logoutUserResponse.setMessage("logout successfully");
             return logoutUserResponse;
     }
 
@@ -101,40 +109,36 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public CreateNoteResponse createNote(CreateNoteRequest createNoteRequest) {
-        //validateLogin(createNoteRequest.getEmail());
+        validateLogin(createNoteRequest.getEmail());
+               User user = userRepository.findUserByEmail(createNoteRequest.getEmail()).get();
 
-            String noteTitle = createNoteRequest.getTitle();
-            Notes existingNote = noteRepository.findNotesByTitle(noteTitle);
-            if (existingNote != null) {
+                Notes note = new Notes();
+                note.setTitle(createNoteRequest.getTitle());
+                note.setContent(createNoteRequest.getContent());
+                note.setDateCreated(createNoteRequest.getDateCreated());
+                Notes savedNote = noteRepository.save(note);
 
-                CreateNoteResponse errorResponse = new CreateNoteResponse();
-                errorResponse.setMessage("note exist already");
-                return errorResponse;
-            }
-
-
-            Notes note = new Notes();
-            note.setTitle(noteTitle);
-            note.setContent(createNoteRequest.getContent());
-            note.setDateAndTimeCreated(createNoteRequest.getDateCreated());
-            Notes savedNote = noteRepository.save(note);
-
-            Tags tags = new Tags();
-            tags.setName(createNoteRequest.getTagName().getName());
-            tagRepository.save(tags);
-            noteList.add(savedNote);
-
-            CreateNoteResponse createNoteResponse = new CreateNoteResponse();
-            createNoteResponse.setMessage("Create note successfully");
-            createNoteResponse.setId(savedNote.getId());
-            return createNoteResponse;
-        }
+                Tags tags = new Tags();
+                tags.setName(createNoteRequest.getTagName().getName());
+                tagRepository.save(tags);
+                noteList.add(savedNote);
+                userRepository.save(user);
 
 
+                CreateNoteResponse createNoteResponse = new CreateNoteResponse();
+                createNoteResponse.setMessage("Create note successfully");
+                createNoteResponse.setTitle(createNoteRequest.getTitle());
+                createNoteResponse.setContent(createNoteRequest.getContent());
+                createNoteResponse.setDateCreated(LocalDateTime.now());
+                createNoteResponse.setId(savedNote.getId());
+                return createNoteResponse;
+    }
 
     @Override
     public DeleteNoteResponse deleteNote(DeleteNoteRequest deleteNoteRequest) {
             Notes noteToDelete = noteRepository.findNotesByTitle(deleteNoteRequest.getTitle());
+            Optional<User> user = userRepository.findUserByEmail(deleteNoteRequest.getEmail());
+
 
             if (noteToDelete != null) {
                 noteRepository.delete(noteToDelete);
@@ -182,7 +186,8 @@ public class UserServiceImpl implements UserService{
             Notes notes1 = notes.get();
             notes1.setTitle(updateNotesRequest.getTitle());
             notes1.setContent(updateNotesRequest.getContent());
-            notes1.setDateAndTimeCreated(updateNotesRequest.getNewDateCreated());
+            notes1.setDateCreated(updateNotesRequest.getNewDateCreated());
+            notes1.setTags(updateNotesRequest.getTagName());
 
             UpdateNoteResponse updateNoteResponse = new UpdateNoteResponse();
             updateNoteResponse.setMessage("note updated successfully");
@@ -204,8 +209,7 @@ public class UserServiceImpl implements UserService{
 
     public void validateUser(String email){
         Optional<User> user = userRepository.findUserByEmail(email);
-        if(user.isPresent()) throw new UserExistException("%s exist already",email);
-
+        if(user.isPresent()) throw new UserExistException(String.format("%s already exist", email));
     }
 
     public void validateLogin(String email){

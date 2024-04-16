@@ -15,6 +15,7 @@ import org.example.exceptions.NoteNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +38,7 @@ public class NoteServiceImpl implements NoteService {
         Notes note = new Notes();
         note.setTitle(createNoteRequest.getTitle());
         note.setContent(createNoteRequest.getContent());
-        note.setDateAndTimeCreated(createNoteRequest.getDateCreated());
+        note.setDateCreated(createNoteRequest.getDateCreated());
         var savedNote = noteRepository.save(note);
 
         for(Tags tag : tagsList){
@@ -46,6 +47,8 @@ public class NoteServiceImpl implements NoteService {
 
         }
         tagRepository.saveAll(tagsList);
+
+
 
         CreateNoteResponse createNoteResponse = new CreateNoteResponse();
         createNoteResponse.setMessage("create note successfully");
@@ -101,7 +104,7 @@ public class NoteServiceImpl implements NoteService {
         List<Tags> tagsList = getAllTags();
 
         for (Notes note : noteRepository.findAll()) {
-            boolean containsTag = containsTagWithName(tagsList, findNoteRequest.getTagName());
+            boolean containsTag = containsTagWithName(findNoteRequest.getTagName());
 
             if (containsTag) {
                 foundNotes.add(note);
@@ -116,8 +119,9 @@ public class NoteServiceImpl implements NoteService {
     }
 
 
-    private boolean containsTagWithName(List<Tags> tagsList, String tagName) {
-        for (Tags tag : tagsList) {
+    private boolean containsTagWithName(String tagName) {
+        List<Tags> tagsList1 = noteRepository.findByTags(tagName);
+        for (Tags tag : tagsList1) {
             if (tag.getName().equals(tagName)) {
                 return true;
             }

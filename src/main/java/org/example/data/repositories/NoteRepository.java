@@ -1,8 +1,10 @@
 package org.example.data.repositories;
 
 import org.example.data.models.Notes;
+import org.example.data.models.Tags;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface NoteRepository extends MongoRepository<Notes,String> {
@@ -16,4 +18,7 @@ public interface NoteRepository extends MongoRepository<Notes,String> {
 
 
     Notes findByTitle(String title);
+
+    List<Tags> findByTags(String tagName);
 }
+

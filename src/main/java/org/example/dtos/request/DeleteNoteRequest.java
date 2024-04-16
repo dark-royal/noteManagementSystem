@@ -8,4 +8,5 @@ public class DeleteNoteRequest {
     @Id
     public String id;
     private String title;
+    private String email;
 }
