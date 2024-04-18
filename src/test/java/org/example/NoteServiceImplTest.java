@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,11 +46,11 @@ public class NoteServiceImplTest {
         CreateNoteRequest createNoteRequest = new CreateNoteRequest();
         createNoteRequest.setTitle("My tomorrow");
         createNoteRequest.setContent("I know tomorrow will be good");
-        createNoteRequest.setDateCreated(LocalDate.now());
+        createNoteRequest.setDateCreated(LocalDateTime.now());
 
         Tags tags = new Tags();
         tags.setName("work");
-        createNoteRequest.setTags(tags);
+        createNoteRequest.setTagName(tags);
 
         noteService.createNote(createNoteRequest);
         assertEquals(1,noteService.findAll().size());
@@ -60,11 +61,11 @@ public class NoteServiceImplTest {
         CreateNoteRequest createNoteRequest = new CreateNoteRequest();
         createNoteRequest.setTitle("My tomorrow");
         createNoteRequest.setContent("I know tomorrow will be good");
-        createNoteRequest.setDateCreated(LocalDate.now());
+        createNoteRequest.setDateCreated(LocalDateTime.now());
 
         Tags tags = new Tags();
         tags.setName("personal");
-        createNoteRequest.setTags(tags);
+        createNoteRequest.setTagName(tags);
 
         CreateNoteResponse response = noteService.createNote(createNoteRequest);
         assertThat(response.getMessage()).isNotNull();
@@ -77,11 +78,11 @@ public class NoteServiceImplTest {
         CreateNoteRequest createNoteRequest = new CreateNoteRequest();
         createNoteRequest.setTitle("My Love");
         createNoteRequest.setContent("I Love You So Much ");
-        createNoteRequest.setDateCreated(LocalDate.now());
+        createNoteRequest.setDateCreated(LocalDateTime.now());
 
         Tags tags = new Tags();
         tags.setName("personal");
-        createNoteRequest.setTags(tags);
+        createNoteRequest.setTagName(tags);
 
         noteService.createNote(createNoteRequest);
         assertEquals(1,noteService.findAll().size());
@@ -105,11 +106,11 @@ public class NoteServiceImplTest {
         CreateNoteRequest createNoteRequest = new CreateNoteRequest();
         createNoteRequest.setTitle("My next week");
         createNoteRequest.setContent("I know tomorrow will be good and better");
-        createNoteRequest.setDateCreated(LocalDate.now());
+        createNoteRequest.setDateCreated(LocalDateTime.now());
 
         Tags tags = new Tags();
         tags.setName("Nxt week plan");
-        createNoteRequest.setTags(tags);
+        createNoteRequest.setTagName(tags);
 
         CreateNoteResponse response = noteService.createNote(createNoteRequest);
         assertThat(response.getMessage()).isNotNull();
@@ -132,11 +133,11 @@ public class NoteServiceImplTest {
         CreateNoteRequest createNoteRequest = new CreateNoteRequest();
         createNoteRequest.setTitle("My tomorrow");
         createNoteRequest.setContent("I know tomorrow will be good");
-        createNoteRequest.setDateCreated(LocalDate.now());
+        createNoteRequest.setDateCreated(LocalDateTime.now());
 
         Tags tags = new Tags();
         tags.setName("work");
-        createNoteRequest.setTags(tags);
+        createNoteRequest.setTagName(tags);
 
         CreateNoteResponse response = noteService.createNote(createNoteRequest);
         assertThat(response.getMessage()).isNotNull();
@@ -146,11 +147,11 @@ public class NoteServiceImplTest {
         CreateNoteRequest createNoteRequest1 = new CreateNoteRequest();
         createNoteRequest1.setTitle("My today");
         createNoteRequest1.setContent("today is my day");
-        createNoteRequest1.setDateCreated(LocalDate.now());
+        createNoteRequest1.setDateCreated(LocalDateTime.now());
 
         Tags tags1 = new Tags();
         tags1.setName("work");
-        createNoteRequest.setTags(tags);
+        createNoteRequest.setTagName(tags);
 
         CreateNoteResponse response1 = noteService.createNote(createNoteRequest1);
         assertThat(response1.getMessage()).isNotNull();
@@ -164,24 +165,24 @@ public class NoteServiceImplTest {
         CreateNoteRequest createNoteRequest = new CreateNoteRequest();
         createNoteRequest.setTitle("semicolon");
         createNoteRequest.setContent("I love semicolon");
-        createNoteRequest.setDateCreated(LocalDate.now());
+        createNoteRequest.setDateCreated(LocalDateTime.now());
 
         Tags tags = new Tags();
         tags.setName("work1");
-        createNoteRequest.setTags(tags);
+        createNoteRequest.setTagName(tags);
 
         CreateNoteResponse response = noteService.createNote(createNoteRequest);
         assertThat(response.getMessage()).isNotNull();
 
-        // Create second note
+
         CreateNoteRequest createNoteRequest1 = new CreateNoteRequest();
         createNoteRequest1.setTitle("semicolon student");
         createNoteRequest1.setContent("I love semicolon student");
-        createNoteRequest1.setDateCreated(LocalDate.now());
+        createNoteRequest1.setDateCreated(LocalDateTime.now());
 
         Tags tags1 = new Tags();
         tags1.setName("work");
-        createNoteRequest1.setTags(tags1);
+        createNoteRequest1.setTagName(tags1);
 
         CreateNoteResponse response1 = noteService.createNote(createNoteRequest1);
         assertThat(response1.getMessage()).isNotNull();
@@ -192,7 +193,7 @@ public class NoteServiceImplTest {
         findNoteRequest.setTagName("work");
         List<Notes> notes = noteService.findNoteByTagName(findNoteRequest);
         assertFalse(notes.isEmpty(), "List of notes should not be empty");
-        // Check the title of the first note
+
         assertEquals("semicolon student", notes.get(0).getTitle());
     }
 

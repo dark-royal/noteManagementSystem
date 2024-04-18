@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -156,11 +157,11 @@ public class UserServiceImplTest {
         CreateNoteRequest createNoteRequest = new CreateNoteRequest();
         createNoteRequest.setTitle("Precious");
         createNoteRequest.setContent("precious is a good girl i guess");
-        createNoteRequest.setDateCreated(LocalDate.now());
+        createNoteRequest.setDateCreated(LocalDateTime.now());
 
         Tags tags = new Tags();
         tags.setName("work");
-        createNoteRequest.setTags(tags);
+        createNoteRequest.setTagName(tags);
 
 
         CreateNoteResponse createNoteResponse = userService.createNote(createNoteRequest);
@@ -191,11 +192,11 @@ public class UserServiceImplTest {
         CreateNoteRequest createNoteRequest = new CreateNoteRequest();
         createNoteRequest.setTitle("heritage");
         createNoteRequest.setContent("heritage is a good girl i guess1");
-        createNoteRequest.setDateCreated(LocalDate.now());
+        createNoteRequest.setDateCreated(LocalDateTime.now());
 
         Tags tags = new Tags();
         tags.setName("personal");
-        createNoteRequest.setTags(tags);
+        createNoteRequest.setTagName(tags);
 
         CreateNoteResponse response1 = userService.createNote(createNoteRequest);
         assertThat(response1.getMessage()).isNotNull();
@@ -231,11 +232,11 @@ public class UserServiceImplTest {
         CreateNoteRequest createNoteRequest = new CreateNoteRequest();
         createNoteRequest.setTitle("heritage");
         createNoteRequest.setContent("gideon is a good boy i guess1");
-        createNoteRequest.setDateCreated(LocalDate.now());
+        createNoteRequest.setDateCreated(LocalDateTime.now());
 
         Tags tags = new Tags();
         tags.setName("personally");
-        createNoteRequest.setTags(tags);
+        createNoteRequest.setTagName(tags);
 
         CreateNoteResponse response1 = userService.createNote(createNoteRequest);
         assertThat(response1.getMessage()).isNotNull();
@@ -245,11 +246,11 @@ public class UserServiceImplTest {
         CreateNoteRequest createNoteRequest1 = new CreateNoteRequest();
         createNoteRequest1.setTitle("gideon");
         createNoteRequest1.setContent("gideon is a good girl i guess1");
-        createNoteRequest1.setDateCreated(LocalDate.now());
+        createNoteRequest1.setDateCreated(LocalDateTime.now());
 
         Tags tags1 = new Tags();
         tags1.setName("personally");
-        createNoteRequest1.setTags(tags1);
+        createNoteRequest1.setTagName(tags1);
 
         CreateNoteResponse response11 = userService.createNote(createNoteRequest1);
         assertThat(response11.getMessage()).isNotNull();
@@ -259,11 +260,11 @@ public class UserServiceImplTest {
         CreateNoteRequest createNoteRequest2 = new CreateNoteRequest();
         createNoteRequest2.setTitle("micheal");
         createNoteRequest2.setContent("michael is a bad boy");
-        createNoteRequest2.setDateCreated(LocalDate.now());
+        createNoteRequest2.setDateCreated(LocalDateTime.now());
 
         Tags tags2 = new Tags();
         tags2.setName("personally");
-        createNoteRequest2.setTags(tags2);
+        createNoteRequest2.setTagName(tags2);
 
         CreateNoteResponse response12 = userService.createNote(createNoteRequest2);
         assertThat(response12.getMessage()).isNotNull();

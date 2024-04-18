@@ -13,6 +13,7 @@ public class Notes {
     private String id;
     private String title;
     private String content;
+    private User user;
     private LocalDateTime dateCreated;
     @DBRef
     private Tags tags;

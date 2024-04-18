@@ -5,5 +5,6 @@ import lombok.Data;
 @Data
 public class FindNoteRequest {
     private String title;
+    private String email;
     private String tagName;
 }

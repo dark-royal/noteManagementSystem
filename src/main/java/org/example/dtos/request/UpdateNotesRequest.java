@@ -11,6 +11,7 @@ public class UpdateNotesRequest {
     @Id
     private String id;
     private String title;
+    private String email;
     private String content;
     private Tags tagName;
     private LocalDateTime newDateCreated;

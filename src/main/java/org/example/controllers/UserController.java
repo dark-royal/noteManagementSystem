@@ -82,7 +82,7 @@ public class UserController {
 
     }
 
-    @PostMapping
+    @PostMapping("/updateNote")
     public ResponseEntity<UpdateNoteResponse> updateNote(UpdateNotesRequest updateNotesRequest){
         try {
             UpdateNoteResponse updateNoteResponse = userService.updateNote(updateNotesRequest);
@@ -92,6 +92,9 @@ public class UserController {
         }
 
     }
+
+//    @GetMapping("/findAllNoteByEmail{email}")
+//    public
 
 
 

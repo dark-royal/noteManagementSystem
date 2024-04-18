@@ -1,6 +1,5 @@
 package org.example.services;
 
-import lombok.RequiredArgsConstructor;
 import org.example.data.models.Notes;
 import org.example.data.models.Tags;
 import org.example.data.models.User;
@@ -13,7 +12,6 @@ import org.example.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,15 +23,17 @@ public class UserServiceImpl implements UserService{
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private NoteService noteService;
-    private List<Notes>noteList = new ArrayList<>();
-    @Autowired
     private NoteRepository noteRepository;
     @Autowired
     private TagRepository tagRepository;
     @Override
     public List<User> findAllUser() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public void lockNote(String password) {
+
     }
 
     @Override
@@ -69,20 +69,20 @@ public class UserServiceImpl implements UserService{
         }
 
         user.setLoginStatus(true);
+        user.setNotesList(findAllNotesByEmail(loginUserRequest.getEmail()));
         userRepository.save(user);
 
         LoginUserResponse loginUserResponse = new LoginUserResponse();
         loginUserResponse.setMessage("Login successful");
-        loginUserResponse.setLoginStatus(loginUserRequest.isLogStatus());
+        loginUserResponse.setLoginStatus(user.isLoginStatus());
         return loginUserResponse;
     }
 
 
-
-
     @Override
     public User findUserById(String id) {
-        return userRepository.findById(id).orElseThrow(()-> new UserNotFoundException("user not found"));
+        return userRepository.findById(id).
+                orElseThrow(()-> new UserNotFoundException("user not found"));
     }
 
     @Override
@@ -113,6 +113,7 @@ public class UserServiceImpl implements UserService{
                User user = userRepository.findUserByEmail(createNoteRequest.getEmail()).get();
 
                 Notes note = new Notes();
+
                 note.setTitle(createNoteRequest.getTitle());
                 note.setContent(createNoteRequest.getContent());
                 note.setDateCreated(createNoteRequest.getDateCreated());
@@ -121,7 +122,7 @@ public class UserServiceImpl implements UserService{
                 Tags tags = new Tags();
                 tags.setName(createNoteRequest.getTagName().getName());
                 tagRepository.save(tags);
-                noteList.add(savedNote);
+                user.getNotesList().add(savedNote);
                 userRepository.save(user);
 
 
@@ -136,22 +137,32 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public DeleteNoteResponse deleteNote(DeleteNoteRequest deleteNoteRequest) {
-            Notes noteToDelete = noteRepository.findNotesByTitle(deleteNoteRequest.getTitle());
-            Optional<User> user = userRepository.findUserByEmail(deleteNoteRequest.getEmail());
+            Notes noteToDelete = noteRepository.findById(deleteNoteRequest.getId()).get();
+            User user = userRepository.findUserByEmail(deleteNoteRequest.getEmail()).orElseThrow(()->new UserNotFoundException(String.format("%s not found",deleteNoteRequest.getEmail())));
 
+            if (user != null) {
 
-            if (noteToDelete != null) {
-                noteRepository.delete(noteToDelete);
-                DeleteNoteResponse response = new DeleteNoteResponse();
-                response.setMessage("Deleted note successfully");
-                return response;
+                if (noteToDelete.getUser().getId().equals(user.getId())) {
+
+                    noteRepository.delete(noteToDelete);
+                    DeleteNoteResponse response = new DeleteNoteResponse();
+                    response.setMessage("Deleted note successfully");
+                    return response;
+                } else {
+
+                    DeleteNoteResponse response = new DeleteNoteResponse();
+                    response.setMessage("Note with title '" + deleteNoteRequest.getTitle() + "' does not belong to the user");
+                    return response;
+                }
             } else {
 
                 DeleteNoteResponse response = new DeleteNoteResponse();
-                response.setMessage("Note with title '" + deleteNoteRequest.getTitle() + "' not found");
+                response.setMessage("Note with title '" + deleteNoteRequest.getTitle() + "' not found or user not found");
                 return response;
             }
         }
+
+
 
     @Override
     public List<Notes> findNoteByTagName(FindNoteRequest findNoteRequest) {
@@ -174,14 +185,39 @@ public class UserServiceImpl implements UserService{
         return foundNotes;
     }
 
+    @Override
+    public List<Notes> findAllNotesByEmail(String email) {
+        validateUserExistence(email);
+        List<Notes> userNotes  = userRepository.findNotesByEmail(email);
+        if (userNotes != null) {
+            return userNotes;
+
+
+        }
+        else {
+            throw new UserNoteListIsEmptyException("note is empty");
+        }
+    }
+
+    @Override
+    public FindNoteResponse findNote(FindNoteRequest findNoteRequest){
+        Optional<User> user = userRepository.findUserByEmail(findNoteRequest.getEmail());
+        return null;
+    }
+
+
 
     @Override
     public UpdateNoteResponse updateNote(UpdateNotesRequest updateNotesRequest){
+        validateLogin(updateNotesRequest.getEmail());
+        userRepository.findUserByEmail(updateNotesRequest.getEmail()).get();
         Optional<Notes> notes = noteRepository.findById(updateNotesRequest.getId());
         return getUpdateNoteResponse(updateNotesRequest, notes);
+
     }
 
     public static UpdateNoteResponse getUpdateNoteResponse(UpdateNotesRequest updateNotesRequest, Optional<Notes> notes) {
+
         if (notes.isPresent()){
             Notes notes1 = notes.get();
             notes1.setTitle(updateNotesRequest.getTitle());
@@ -195,16 +231,10 @@ public class UserServiceImpl implements UserService{
         }
         else {
             throw new NoteNotFoundException("note not found");
+
         }
     }
 
-
-//    private void validateCreateNote( String title) {
-//        Notes note = noteRepository.findByTitle(title);
-//        if (note != null) throw new NoteAlreadyExistException("note exist already");
-//
-//
-//    }
 
 
     public void validateUser(String email){
@@ -217,5 +247,12 @@ public class UserServiceImpl implements UserService{
         if(!user.isLoginStatus())throw new UserNotLoggedInException("Pls log in ");
 
     }
+    private void validateUserExistence(String email) {
+        if(userRepository.findUserByEmail(email).isEmpty())
+            throw new UserNotFoundException("""
+                    user not found
+                    do you mean Dark royal???🤣🤣🤣🤣""");
+    }
+
 
 }

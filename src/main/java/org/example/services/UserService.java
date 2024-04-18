@@ -13,6 +13,10 @@ import java.util.List;
 public interface UserService {
     List<User> findAllUser();
 
+    void lockNote(String password);
+
+
+
     RegisterUserResponse register(RegisterUserRequest registerUserRequest);
 
     void deleteAll();
@@ -32,6 +36,12 @@ public interface UserService {
     DeleteNoteResponse deleteNote(DeleteNoteRequest deleteNoteRequest);
 
     List<Notes> findNoteByTagName(FindNoteRequest findNoteRequest);
+
+
+
+    List<Notes> findAllNotesByEmail(String email);
+
+    FindNoteResponse findNote(FindNoteRequest findNoteRequest);
 
     UpdateNoteResponse updateNote(UpdateNotesRequest updateNotesRequest);
 
