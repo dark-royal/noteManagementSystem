@@ -1,6 +1,7 @@
 package org.example.services;
 
 import org.example.data.models.Notes;
+import org.example.data.models.User;
 import org.example.dtos.request.CreateNoteRequest;
 import org.example.dtos.request.DeleteNoteRequest;
 import org.example.dtos.request.FindNoteRequest;
@@ -29,4 +30,7 @@ public interface NoteService {
 
     List<Notes> findNoteByTagName(FindNoteRequest findNoteRequest);
 
+//    List<Notes> findAllUserNote(String email);
+
+    List<Notes> findAllUserNote(User note);
 }

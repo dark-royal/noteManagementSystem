@@ -27,7 +27,8 @@ public interface UserService {
 
     LogoutUserResponse logout(LogoutUserRequest logoutUserRequest);
 
-    List<User> getAllNote();
+
+    List<Notes> getAllNote(String email);
 
     List<Tags> getAllTags();
 

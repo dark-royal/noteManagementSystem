@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +27,9 @@ public class UserServiceImpl implements UserService{
     private NoteRepository noteRepository;
     @Autowired
     private TagRepository tagRepository;
+    @Autowired
+    private NoteService noteService;
+
     @Override
     public List<User> findAllUser() {
         return userRepository.findAll();
@@ -97,9 +101,21 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public List<User> getAllNote() {
-        return userRepository.findAll();
+    public List<Notes> getAllNote(String email) {
+       //List<Notes> notesList = this.noteService.findAllUserNote(userRepository.findUserByEmail(email).get());
+//        return noteRepository.findAll();
+//        Optional<User> userOptional = userRepository.findUserByEmail(email);
+//        if (userOptional.isPresent()) {
+//            User user = userOptional.get();
+//            List<Notes> notesList = noteService.findAllUserNote(user);
+//            return notesList;
+//        } else {
+//            throw new UserNotFoundException("user not found");
+//
+//        }
+        return noteRepository.findAll();
     }
+
     @Override
     public List<Tags> getAllTags() {
         return tagRepository.findAll();
@@ -117,12 +133,15 @@ public class UserServiceImpl implements UserService{
                 note.setTitle(createNoteRequest.getTitle());
                 note.setContent(createNoteRequest.getContent());
                 note.setDateCreated(createNoteRequest.getDateCreated());
+                note.setUser(user);
                 Notes savedNote = noteRepository.save(note);
 
                 Tags tags = new Tags();
                 tags.setName(createNoteRequest.getTagName().getName());
                 tagRepository.save(tags);
-                user.getNotesList().add(savedNote);
+                List<Notes>notes = user.getNotesList();
+                notes.add(savedNote);
+                user.setNotesList(notes)                             ;
                 userRepository.save(user);
 
 

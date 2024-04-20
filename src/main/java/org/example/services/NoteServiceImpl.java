@@ -2,6 +2,7 @@ package org.example.services;
 
 import org.example.data.models.Notes;
 import org.example.data.models.Tags;
+import org.example.data.models.User;
 import org.example.data.repositories.NoteRepository;
 import org.example.data.repositories.TagRepository;
 import org.example.dtos.request.CreateNoteRequest;
@@ -15,7 +16,6 @@ import org.example.exceptions.NoteNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -41,13 +41,12 @@ public class NoteServiceImpl implements NoteService {
         note.setDateCreated(createNoteRequest.getDateCreated());
         var savedNote = noteRepository.save(note);
 
-        for(Tags tag : tagsList){
+        for (Tags tag : tagsList) {
             tag.setId(savedNote.getId());
             tag.setName(tag.getName());
 
         }
         tagRepository.saveAll(tagsList);
-
 
 
         CreateNoteResponse createNoteResponse = new CreateNoteResponse();
@@ -91,7 +90,7 @@ public class NoteServiceImpl implements NoteService {
     @Override
     public Notes findNote(FindNoteRequest findNoteRequest) {
         Notes notes = noteRepository.findNotesByTitle(findNoteRequest.getTitle());
-        if(notes == null)throw new NoteNotFoundException("Note not found");
+        if (notes == null) throw new NoteNotFoundException("Note not found");
         else {
             return notes;
         }
@@ -114,6 +113,16 @@ public class NoteServiceImpl implements NoteService {
         return foundNotes;
     }
 
+    @Override
+    public List<Notes> findAllUserNote(User note) {
+        Optional<List<Notes>> n = noteRepository.findNoteByUser(note);
+        if (n.isPresent()) {
+            return n.get();
+        }
+        throw new RuntimeException("no");
+    }
+
+
     private List<Tags> getAllTags() {
         return tagRepository.findAll();
     }
@@ -128,7 +137,8 @@ public class NoteServiceImpl implements NoteService {
         }
         return false;
     }
-}
 
+
+}
 
 
