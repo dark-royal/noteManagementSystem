@@ -40,11 +40,14 @@ public interface UserService {
 
 
 
-    List<Notes> findAllNotesByEmail(String email);
+    List<FindAllNoteResponse> findAllNotesByEmail(FindAllNoteRequest findAllNoteRequest);
 
     FindNoteResponse findNote(FindNoteRequest findNoteRequest);
 
     UpdateNoteResponse updateNote(UpdateNotesRequest updateNotesRequest);
 
+    ShareNoteResponse shareNote(ShareNoteRequest shareNoteRequest);
+
+    MakeSFavoriteResponse makeFavorites(MakeFavoritesRequest makeFavoritesRequest);
 
 }

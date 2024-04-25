@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -210,7 +209,7 @@ public class UserServiceImplTest {
 
 
         DeleteNoteRequest deleteNoteRequest = new DeleteNoteRequest();
-        deleteNoteRequest.setTitle("praise");
+        deleteNoteRequest.setTitle(createNoteRequest.getTitle());
         deleteNoteRequest.setEmail(registerUserRequest.getEmail());
         deleteNoteRequest.setId(response1.getId());
         DeleteNoteResponse response2 = userService.deleteNote(deleteNoteRequest);

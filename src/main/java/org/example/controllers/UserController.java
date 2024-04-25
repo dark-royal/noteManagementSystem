@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -83,18 +84,26 @@ public class UserController {
     }
 
     @PostMapping("/updateNote")
-    public ResponseEntity<UpdateNoteResponse> updateNote(UpdateNotesRequest updateNotesRequest){
+    public ResponseEntity<?> updateNote(UpdateNotesRequest updateNotesRequest){
         try {
             UpdateNoteResponse updateNoteResponse = userService.updateNote(updateNotesRequest);
             return ResponseEntity.status(HttpStatus.OK).body(updateNoteResponse);
         } catch (Exception e) {
-            throw new NoteNotFoundException("Note not found");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
 
     }
 
-//    @GetMapping("/findAllNoteByEmail{email}")
-//    public
+    @GetMapping("/findAllNoteByEmail{email}")
+    public ResponseEntity<List<?>> findAllNoteOfUser(FindAllNoteRequest findAllNoteRequest){
+        try{
+            List<FindAllNoteResponse> findAllNoteResponse = userService.findAllNotesByEmail(findAllNoteRequest);
+            return ResponseEntity.status(HttpStatus.OK).body(findAllNoteResponse);
+        }catch (UserNoteListIsEmptyException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonList(e.getMessage()));
+
+        }
+    }
 
 
 
