@@ -260,7 +260,7 @@ public class UserServiceImpl implements UserService{
         Notes notes = noteRepository.findNotesById(shareNoteRequest.getId()).orElseThrow(()->new NoteNotFoundException("note not found"));
 
         List<Notes> sharedNotes = sendersEmail.getSharedNotesList();
-
+        sendersEmail.shareNote(receiverEmail);
 
 
         List<Notes> receiversNotes = sendersEmail.getReceiverReceivedNote();
