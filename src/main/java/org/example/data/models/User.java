@@ -25,5 +25,7 @@ public class User {
     private List<Notes> receiverReceivedNote;
 
 
+    public void shareNote(List<Notes> sharedNotes) {
 
+    }
 }

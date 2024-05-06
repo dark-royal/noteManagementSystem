@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -172,7 +174,6 @@ public class UserServiceImplTest {
         assertEquals(1, userService.getAllNote(registerUserResponse.getEmail()).size());
 
 
-
     }
 
 
@@ -294,8 +295,8 @@ public class UserServiceImplTest {
         assertThat(response.getMessage()).isNotNull();
         assertEquals(1, userService.getAllNote(registerUserRequest.getEmail()).size());
 
-       UpdateNotesRequest updateNotesRequest = new UpdateNotesRequest();
-       System.out.println("the response id ... " + response1.getId());
+        UpdateNotesRequest updateNotesRequest = new UpdateNotesRequest();
+        System.out.println("the response id ... " + response1.getId());
         updateNotesRequest.setId(response1.getId());
         updateNotesRequest.setTitle("My tomorrow my life1");
         updateNotesRequest.setEmail(createNoteRequest.getEmail());
@@ -305,17 +306,143 @@ public class UserServiceImplTest {
         assertThat(updateNoteResponse.getMessage()).isNotNull();
         assertEquals(1, userService.getAllNote(registerUserRequest.getEmail()).size());
 
-   }
-}
+    }
 
-//
-////    public RegisterUserRequest registerRequest(String email, String password, String username) {
-////        return RegisterUserRequest.builder()
-////                .email(email)
-////                .password(password)
-////                .username(username)
-////                .build();
-////    }
-//
-//}
-//
+    @Test
+    public void testThatAllUserNoteCanBeFound() {
+        RegisterUserRequest registerUserRequest = new RegisterUserRequest();
+        registerUserRequest.setEmail("abbey@gmail.com");
+        registerUserRequest.setUsername("abbey");
+        registerUserRequest.setPassword("abbey1");
+        RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
+        assertThat(registerUserResponse.getMessage()).isNotNull();
+        assertEquals(1, userService.findAllUser().size());
+
+        LoginUserRequest loginUserRequest = new LoginUserRequest();
+        loginUserRequest.setEmail(registerUserRequest.getEmail());
+        loginUserRequest.setPassword(registerUserRequest.getPassword());
+        LoginUserResponse response = userService.login(loginUserRequest);
+        assertThat(response.getMessage()).isNotNull();
+        assertTrue(userService.findUserById(registerUserResponse.getUserId()).isLoginStatus());
+
+
+        CreateNoteRequest createNoteRequest = new CreateNoteRequest();
+        createNoteRequest.setTitle("Lambdas and stream");
+        createNoteRequest.setContent("It is in chapter seventeen");
+        createNoteRequest.setEmail(registerUserRequest.getEmail());
+        createNoteRequest.setDateCreated(LocalDateTime.now());
+
+        Tags tags = new Tags();
+        tags.setName("java");
+        createNoteRequest.setTagName(tags);
+
+        CreateNoteResponse response1 = userService.createNote(createNoteRequest);
+        assertThat(response1.getMessage()).isNotNull();
+        assertEquals(1, userService.getAllNote(registerUserRequest.getEmail()).size());
+
+
+        CreateNoteRequest createNoteRequest1 = new CreateNoteRequest();
+        createNoteRequest1.setTitle("Lambdas and stream");
+        createNoteRequest1.setContent("It is in chapter seventeen");
+        createNoteRequest1.setEmail(registerUserRequest.getEmail());
+        createNoteRequest1.setDateCreated(LocalDateTime.now());
+
+        Tags tags1 = new Tags();
+        tags1.setName("java");
+        createNoteRequest.setTagName(tags1);
+
+        CreateNoteResponse response2 = userService.createNote(createNoteRequest);
+        assertThat(response2.getMessage()).isNotNull();
+
+        assertEquals(2, userService.getAllNote(registerUserRequest.getEmail()).size());
+
+            FindAllNoteRequest findAllNoteRequest = new FindAllNoteRequest();
+            findAllNoteRequest.setEmail(registerUserRequest.getEmail());
+            List<FindAllNoteResponse> userNotes = userService.findAllNotesByEmail(findAllNoteRequest);
+
+            assertThat(userNotes).isNotEmpty();
+
+            assertEquals(2, userNotes.size());
+        }
+
+
+        @Test
+    public void testShareNote(){
+            RegisterUserRequest registerUserRequest = new RegisterUserRequest();
+            registerUserRequest.setEmail("janet@gmail.com");
+            registerUserRequest.setUsername("janet");
+            registerUserRequest.setPassword("janet1");
+            RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
+            assertThat(registerUserResponse.getMessage()).isNotNull();
+            //assertEquals(1, userService.findAllUser().size());
+
+            LoginUserRequest loginUserRequest = new LoginUserRequest();
+            loginUserRequest.setEmail(registerUserRequest.getEmail());
+            loginUserRequest.setPassword(registerUserRequest.getPassword());
+            LoginUserResponse response = userService.login(loginUserRequest);
+            assertThat(response.getMessage()).isNotNull();
+            assertTrue(userService.findUserById(registerUserResponse.getUserId()).isLoginStatus());
+
+
+            RegisterUserRequest registerUserRequest1 = new RegisterUserRequest();
+            registerUserRequest1.setEmail("ola@gmail.com");
+            registerUserRequest1.setUsername("ola");
+            registerUserRequest1.setPassword("ola1");
+            RegisterUserResponse registerUserResponse1 = userService.register(registerUserRequest1);
+            assertThat(registerUserResponse1.getMessage()).isNotNull();
+            assertEquals(2, userService.findAllUser().size());
+
+            LoginUserRequest loginUserRequest1 = new LoginUserRequest();
+            loginUserRequest1.setEmail(registerUserRequest1.getEmail());
+            loginUserRequest1.setPassword(registerUserRequest1.getPassword());
+            LoginUserResponse response1 = userService.login(loginUserRequest1);
+            assertThat(response1.getMessage()).isNotNull();
+            assertTrue(userService.findUserById(registerUserResponse1.getUserId()).isLoginStatus());
+
+
+            CreateNoteRequest createNoteRequest = new CreateNoteRequest();
+            createNoteRequest.setTitle("array and stream");
+            createNoteRequest.setContent("It is in chapter seven");
+            createNoteRequest.setEmail(registerUserRequest.getEmail());
+            createNoteRequest.setDateCreated(LocalDateTime.now());
+
+            Tags tags = new Tags();
+            tags.setName("java");
+            createNoteRequest.setTagName(tags);
+
+            CreateNoteResponse response2 = userService.createNote(createNoteRequest);
+            assertThat(response2.getMessage()).isNotNull();
+            assertEquals(1, userService.getAllNote(registerUserRequest.getEmail()).size());
+
+
+            CreateNoteRequest createNoteRequest1 = new CreateNoteRequest();
+            createNoteRequest1.setTitle("Lambdas and stream");
+            createNoteRequest1.setContent("It is in chapter seventeen");
+            createNoteRequest1.setEmail(registerUserRequest.getEmail());
+            createNoteRequest1.setDateCreated(LocalDateTime.now());
+
+            Tags tags1 = new Tags();
+            tags1.setName("java");
+            createNoteRequest1.setTagName(tags1);
+
+            CreateNoteResponse response3 = userService.createNote(createNoteRequest1);
+            assertThat(response3.getMessage()).isNotNull();
+
+            assertEquals(2, userService.getAllNote(registerUserRequest.getEmail()).size());
+
+            ShareNoteRequest shareNoteRequest = new ShareNoteRequest();
+            shareNoteRequest.setReceiverEmail(registerUserRequest1.getEmail());
+            shareNoteRequest.setSenderEmail(registerUserRequest.getEmail());
+            shareNoteRequest.setId(createNoteRequest.getId());
+            shareNoteRequest.setNoteTitle(createNoteRequest.getTitle());
+            shareNoteRequest.setNoteContent(createNoteRequest.getContent());
+
+            ShareNoteResponse shareNoteResponse = userService.shareNote(shareNoteRequest);
+            assertThat(shareNoteResponse.getMessage()).isNotNull();
+            assertEquals(2,userService.getAllNote(registerUserRequest.getEmail()).size());
+            assertEquals(1,userService.getAllNote(registerUserRequest1.getEmail()).size());
+    }
+
+
+    }
+

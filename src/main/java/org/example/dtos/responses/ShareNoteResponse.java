@@ -1,6 +1,7 @@
 package org.example.dtos.responses;
 
 import lombok.Data;
+import org.example.data.models.Notes;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +14,8 @@ public class ShareNoteResponse {
     private String senderEmail;
     private String receiverEmail;
     private LocalDateTime dateShared;
+
+
 
     public void setNoteShared() {
     }
