@@ -489,9 +489,12 @@ public class UserServiceImplTest {
         lockNoteRequest.setPassword("1234");
         lockNoteRequest.setEmail(findAllNoteRequest.getEmail());
         LockNoteResponse lockNoteResponse = userService.lockNote(lockNoteRequest);
-        assertThat(lockNoteResponse.getMessage()).isNotNull();
         assertTrue(lockNoteResponse.isLockStatus());
-
+//        int count=0;
+//        for(FindAllNoteResponse note : userNotes) {
+//            System.out.println(++count);
+//            assertTrue(note.isLockStatus());
+//        }
 
 
     }

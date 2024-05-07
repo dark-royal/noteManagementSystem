@@ -251,7 +251,19 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public FindNoteResponse findNote(FindNoteRequest findNoteRequest){
-        return null;
+        Notes notes = userRepository.findNoteByEmailAndNoteTitle(findNoteRequest.getEmail(),findNoteRequest.getTitle());
+        if(notes != null){
+            notes.setTitle(findNoteRequest.getTitle());
+            notes.setContent(findNoteRequest.getContent());
+            notes.setDateCreated(LocalDateTime.now());
+
+//        FindNoteResponse findNoteResponse = new FindNoteResponse();
+//        findNoteResponse.setMessage("note found successfully");
+//        findNoteResponse.setTitle(findNoteRequest.getTitle());
+//        findNoteResponse.setContent(findNoteRequest.getContent());
+//        findNoteResponse.setDateCreated(LocalDateTime.now());
+        }
+        throw new NoteNotFoundException("NOTE NOT FOUND");
     }
 
     @Override
