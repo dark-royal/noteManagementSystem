@@ -26,8 +26,7 @@ public class UserServiceImpl implements UserService{
     private NoteRepository noteRepository;
     @Autowired
     private TagRepository tagRepository;
-    @Autowired
-    private NoteService noteService;
+
 
     @Override
     public List<User> findAllUser() {
@@ -35,8 +34,19 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public void lockNote(String password) {
+    public LockNoteResponse lockNote(LockNoteRequest lockNoteRequest) {
+        List<Notes> userNote = userRepository.findNotesByEmail(lockNoteRequest.getEmail());
+        if(userNote != null){
+            userNote.forEach(note->{note.setPassword(lockNoteRequest.getPassword());
+            note.setLockStatus(true);});
 
+            LockNoteResponse lockNoteResponse = new LockNoteResponse();
+            lockNoteResponse.setLockStatus(true);
+            lockNoteResponse.setEmail(lockNoteRequest.getEmail());
+            return lockNoteResponse;
+
+        }
+            throw new  UserNoteListIsEmptyException("user does not have any note");
     }
 
     @Override
@@ -80,7 +90,6 @@ public class UserServiceImpl implements UserService{
         return loginUserResponse;
     }
 
-
     @Override
     public User findUserById(String id) {
         return userRepository.findById(id).
@@ -116,10 +125,9 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public List<Tags> getAllTags() {
+
         return tagRepository.findAll();
     }
-
-
 
     @Override
     public CreateNoteResponse createNote(CreateNoteRequest createNoteRequest) {
@@ -127,7 +135,6 @@ public class UserServiceImpl implements UserService{
         User user = userRepository.findUserByEmail(createNoteRequest.getEmail()).get();
 
         Notes note = new Notes();
-
         note.setTitle(createNoteRequest.getTitle());
         note.setContent(createNoteRequest.getContent());
         note.setDateCreated(createNoteRequest.getDateCreated());
@@ -153,7 +160,6 @@ public class UserServiceImpl implements UserService{
         createNoteResponse.setId(savedNote.getId());
         return createNoteResponse;
     }
-
 
     @Override
     public DeleteNoteResponse deleteNote(DeleteNoteRequest deleteNoteRequest) {
@@ -185,8 +191,6 @@ public class UserServiceImpl implements UserService{
         response.setMessage("Deleted note successfully");
         return response;
     }
-
-
 
 
     @Override
@@ -246,22 +250,17 @@ public class UserServiceImpl implements UserService{
             return response;
         }
 
-
-
-
     @Override
     public FindNoteResponse findNote(FindNoteRequest findNoteRequest){
         return null;
     }
-
-
 
     @Override
     public ShareNoteResponse shareNote(ShareNoteRequest shareNoteRequest) {
         validateLogin(shareNoteRequest.getSenderEmail());
         validateLogin(shareNoteRequest.getReceiverEmail());
         User senderEmail = userRepository.findUserByEmail(shareNoteRequest.getSenderEmail()).orElseThrow(() -> new UserNotFoundException(String.format("%s not found", shareNoteRequest.getSenderEmail())));
-        User receiverEmail = userRepository.findUserByEmail(shareNoteRequest.getSenderEmail()).orElseThrow(() -> new UserNotFoundException(String.format("%s not found", shareNoteRequest.getSenderEmail())));
+        User receiverEmail = userRepository.findUserByEmail(shareNoteRequest.getSenderEmail()).orElseThrow(() -> new UserNotFoundException(String.format("%s not found", shareNoteRequest.getReceiverEmail())));
         Notes sharedNote = noteRepository.findNotesById(shareNoteRequest.getId(), senderEmail).orElseThrow(() -> new NoteNotFoundException("note not found"));
 
 
@@ -297,11 +296,9 @@ public class UserServiceImpl implements UserService{
         return shareNoteResponse;
     }
 
-
-
-
     @Override
     public MakeSFavoriteResponse makeFavorites(MakeFavoritesRequest makeFavoritesRequest) {
+
         return null;
     }
 
@@ -332,8 +329,6 @@ public class UserServiceImpl implements UserService{
 
         }
     }
-
-
 
     public void validateUser(String email){
         Optional<User> user = userRepository.findUserByEmail(email);

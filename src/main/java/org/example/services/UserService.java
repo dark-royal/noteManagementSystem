@@ -13,9 +13,8 @@ import java.util.List;
 public interface UserService {
     List<User> findAllUser();
 
-    void lockNote(String password);
 
-
+    LockNoteResponse lockNote(LockNoteRequest lockNoteRequest);
 
     RegisterUserResponse register(RegisterUserRequest registerUserRequest);
 

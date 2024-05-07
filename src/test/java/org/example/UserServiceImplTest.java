@@ -443,6 +443,47 @@ public class UserServiceImplTest {
             assertEquals(1,userService.getAllNote(registerUserRequest1.getEmail()).size());
     }
 
+    @Test
+    public void lockNote(){
+        RegisterUserRequest registerUserRequest = new RegisterUserRequest();
+        registerUserRequest.setEmail("orisha@gmail.com");
+        registerUserRequest.setUsername("orisha");
+        registerUserRequest.setPassword("orisha1");
+        RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
+        assertThat(registerUserResponse.getMessage()).isNotNull();
+        assertEquals(1, userService.findAllUser().size());
+
+        LoginUserRequest loginUserRequest = new LoginUserRequest();
+        loginUserRequest.setEmail(registerUserRequest.getEmail());
+        loginUserRequest.setPassword(registerUserRequest.getPassword());
+        LoginUserResponse response = userService.login(loginUserRequest);
+        assertThat(response.getMessage()).isNotNull();
+        assertTrue(userService.findUserById(registerUserResponse.getUserId()).isLoginStatus());
+
+
+        CreateNoteRequest createNoteRequest = new CreateNoteRequest();
+        createNoteRequest.setTitle("Agba coder");
+        createNoteRequest.setContent("He is agba coder");
+        createNoteRequest.setEmail(registerUserRequest.getEmail());
+        createNoteRequest.setDateCreated(LocalDateTime.now());
+
+        Tags tags = new Tags();
+        tags.setName("programming");
+        createNoteRequest.setTagName(tags);
+
+        CreateNoteResponse response1 = userService.createNote(createNoteRequest);
+        assertThat(response1.getMessage()).isNotNull();
+        assertEquals(1, userService.getAllNote(registerUserRequest.getEmail()).size());
+
+        LockNoteRequest lockNoteRequest = new LockNoteRequest();
+        lockNoteRequest.setPassword("1234");
+        lockNoteRequest.setEmail(createNoteRequest.getEmail());
+        LockNoteResponse lockNoteResponse = userService.lockNote(lockNoteRequest);
+        assertThat(lockNoteResponse.getMessage()).isNotNull();
+        assertTrue(userService.findAllNotesByEmail(lockNoteResponse.
+
+    }
+
 
     }
 

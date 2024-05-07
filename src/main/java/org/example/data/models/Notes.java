@@ -15,6 +15,8 @@ public class Notes {
     private String content;
     private User user;
     private LocalDateTime dateCreated;
+    private boolean lockStatus;
+    private String password;
     @DBRef
     private Tags tags;
 }
