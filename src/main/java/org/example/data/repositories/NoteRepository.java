@@ -15,7 +15,7 @@ public interface NoteRepository extends MongoRepository<Notes,String> {
 
     Notes findNotesByTitle(String title);
 
-    Optional<Notes> findNotesById(String id, User sendersEmail);
+    Optional<Notes> findNotesByTitleAndId(String title,String id, User sendersEmail);
 
 
     Notes findByTitle(String title);

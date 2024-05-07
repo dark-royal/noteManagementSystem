@@ -13,5 +13,6 @@ public class FindAllNoteResponse {
     private String title;
     private LocalDateTime dateCreated;
     private String content;
+    private boolean lockStatus;
 
 }

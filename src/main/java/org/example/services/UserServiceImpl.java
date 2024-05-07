@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-
 public class UserServiceImpl implements UserService{
     @Autowired
     private UserRepository userRepository;
@@ -26,7 +25,6 @@ public class UserServiceImpl implements UserService{
     private NoteRepository noteRepository;
     @Autowired
     private TagRepository tagRepository;
-
 
     @Override
     public List<User> findAllUser() {
@@ -43,6 +41,7 @@ public class UserServiceImpl implements UserService{
             LockNoteResponse lockNoteResponse = new LockNoteResponse();
             lockNoteResponse.setLockStatus(true);
             lockNoteResponse.setEmail(lockNoteRequest.getEmail());
+            lockNoteResponse.setMessage("note locked successfully");
             return lockNoteResponse;
 
         }
@@ -261,7 +260,7 @@ public class UserServiceImpl implements UserService{
         validateLogin(shareNoteRequest.getReceiverEmail());
         User senderEmail = userRepository.findUserByEmail(shareNoteRequest.getSenderEmail()).orElseThrow(() -> new UserNotFoundException(String.format("%s not found", shareNoteRequest.getSenderEmail())));
         User receiverEmail = userRepository.findUserByEmail(shareNoteRequest.getSenderEmail()).orElseThrow(() -> new UserNotFoundException(String.format("%s not found", shareNoteRequest.getReceiverEmail())));
-        Notes sharedNote = noteRepository.findNotesById(shareNoteRequest.getId(), senderEmail).orElseThrow(() -> new NoteNotFoundException("note not found"));
+        Notes sharedNote = noteRepository.findNotesByTitleAndId(shareNoteRequest.getNoteTitle(),shareNoteRequest.getId(), senderEmail).orElseThrow(() -> new NoteNotFoundException("note not found"));
 
 
         List<Notes> sharedNotes = senderEmail.getSharedNotesList();
