@@ -104,6 +104,25 @@ public class UserController {
 
         }
     }
+    @PostMapping("/lock-note")
+    public ResponseEntity<?> lockNote(@RequestBody LockNoteRequest lockNoteRequest){
+        try {
+            LockNoteResponse lockNoteResponse = userService.lockNote(lockNoteRequest);
+            return ResponseEntity.status(HttpStatus.LOCKED).body(lockNoteResponse);
+        } catch (UserNoteListIsEmptyException e) {
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/share-note")
+    public ResponseEntity<?> shareNote(@RequestBody ShareNoteRequest shareNoteRequest){
+        try {
+            ShareNoteResponse shareNoteResponse = userService.shareNote(shareNoteRequest);
+            return ResponseEntity.status(HttpStatus.OK).body(shareNoteResponse);
+        } catch (UserNoteListIsEmptyException | UserNotFoundException | NoteNotFoundException | UserNotLoggedInException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 
 
 

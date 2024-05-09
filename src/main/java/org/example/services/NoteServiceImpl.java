@@ -68,7 +68,7 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public void deleteNote(DeleteNoteRequest deleteNoteRequest) {
-        Notes notes = noteRepository.findNotesByTitle(deleteNoteRequest.getTitle());
+        Notes notes = noteRepository.findNotesByTitle(deleteNoteRequest.getTitle(), senderEmail);
         if (notes == null) throw new NoteNotFoundException("Note not found");
         else {
             noteRepository.delete(notes);
@@ -89,7 +89,7 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public Notes findNote(FindNoteRequest findNoteRequest) {
-        Notes notes = noteRepository.findNotesByTitle(findNoteRequest.getTitle());
+        Notes notes = noteRepository.findNotesByTitle(findNoteRequest.getTitle(), senderEmail);
         if (notes == null) throw new NoteNotFoundException("Note not found");
         else {
             return notes;

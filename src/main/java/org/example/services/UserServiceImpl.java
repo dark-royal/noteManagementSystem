@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -34,9 +34,12 @@ public class UserServiceImpl implements UserService{
     @Override
     public LockNoteResponse lockNote(LockNoteRequest lockNoteRequest) {
         List<Notes> userNote = userRepository.findNotesByEmail(lockNoteRequest.getEmail());
-        if(userNote != null){
-            userNote.forEach(note->{note.setPassword(lockNoteRequest.getPassword());
-            note.setLockStatus(true);});
+        if (userNote != null) {
+            userNote.forEach(note -> {
+                note.setPassword(lockNoteRequest.getPassword());
+                note.setLockStatus(true);
+                noteRepository.save(note);
+            });
 
             LockNoteResponse lockNoteResponse = new LockNoteResponse();
             lockNoteResponse.setLockStatus(true);
@@ -45,7 +48,7 @@ public class UserServiceImpl implements UserService{
             return lockNoteResponse;
 
         }
-            throw new  UserNoteListIsEmptyException("user does not have any note");
+        throw new UserNoteListIsEmptyException("user does not have any note");
     }
 
     @Override
@@ -92,23 +95,23 @@ public class UserServiceImpl implements UserService{
     @Override
     public User findUserById(String id) {
         return userRepository.findById(id).
-                orElseThrow(()-> new UserNotFoundException("user not found"));
+                orElseThrow(() -> new UserNotFoundException("user not found"));
     }
 
     @Override
     public LogoutUserResponse logout(LogoutUserRequest logoutUserRequest) {
         validateLogin(logoutUserRequest.getEmail());
-        User user = userRepository.findUserByEmail(logoutUserRequest.getEmail()).orElseThrow(()-> new UserNotFoundException("User not found"));
-            user.setLoginStatus(false);
-            userRepository.save(user);
-            LogoutUserResponse logoutUserResponse = new LogoutUserResponse();
-            logoutUserResponse.setMessage("logout successfully");
-            return logoutUserResponse;
+        User user = userRepository.findUserByEmail(logoutUserRequest.getEmail()).orElseThrow(() -> new UserNotFoundException("User not found"));
+        user.setLoginStatus(false);
+        userRepository.save(user);
+        LogoutUserResponse logoutUserResponse = new LogoutUserResponse();
+        logoutUserResponse.setMessage("logout successfully");
+        return logoutUserResponse;
     }
 
     @Override
     public List<Notes> getAllNote(String email) {
-       //List<Notes> notesList = this.noteService.findAllUserNote(userRepository.findUserByEmail(email).get());
+        //List<Notes> notesList = this.noteService.findAllUserNote(userRepository.findUserByEmail(email).get());
 //        return noteRepository.findAll();
 //        Optional<User> userOptional = userRepository.findUserByEmail(email);
 //        if (userOptional.isPresent()) {
@@ -163,25 +166,26 @@ public class UserServiceImpl implements UserService{
     @Override
     public DeleteNoteResponse deleteNote(DeleteNoteRequest deleteNoteRequest) {
         validateLogin(deleteNoteRequest.getEmail());
+
         Notes noteToDelete = noteRepository.findByTitle(deleteNoteRequest.getTitle());
 
         if (noteToDelete == null) {
             DeleteNoteResponse response = new DeleteNoteResponse();
             response.setMessage("Note with title '" + deleteNoteRequest.getTitle() + "' not found");
-            return response;
+            throw new NoteNotFoundException("Note with title '" + deleteNoteRequest.getTitle() + "' not found");
         }
 
         User user = userRepository.findUserByEmail(deleteNoteRequest.getEmail()).orElse(null);
         if (user == null) {
             DeleteNoteResponse response = new DeleteNoteResponse();
             response.setMessage("User with email '" + deleteNoteRequest.getEmail() + "' not found");
-            return response;
+            throw new UserNotFoundException("User with email '" + deleteNoteRequest.getEmail() + "' not found");
         }
 
         if (!noteToDelete.getUser().getEmail().equals(user.getEmail())) {
             DeleteNoteResponse response = new DeleteNoteResponse();
             response.setMessage("Note with title '" + deleteNoteRequest.getTitle() + "' does not belong to the user");
-            return response;
+            throw new NoteDoesNotBelongToUserException("Note with title '" + deleteNoteRequest.getTitle() + "' does not belong to the user");
         }
 
 
@@ -234,34 +238,34 @@ public class UserServiceImpl implements UserService{
     }
 
     private FindAllNoteResponse convertToResponse(Notes note) {
-            FindAllNoteResponse response = new FindAllNoteResponse();
+        FindAllNoteResponse response = new FindAllNoteResponse();
 
-            if (note != null) {
-                response.setId(note.getId());
-                response.setTitle(note.getTitle());
-                response.setContent(note.getContent());
-                response.setDateCreated(note.getDateCreated());
-                noteRepository.save(note);
-            } else {
-                throw new IllegalArgumentException("Note is null");
-            }
-
-            return response;
+        if (note != null) {
+            response.setId(note.getId());
+            response.setTitle(note.getTitle());
+            response.setContent(note.getContent());
+            response.setDateCreated(note.getDateCreated());
+            noteRepository.save(note);
+        } else {
+            throw new IllegalArgumentException("Note is null");
         }
 
+        return response;
+    }
+
     @Override
-    public FindNoteResponse findNote(FindNoteRequest findNoteRequest){
-        Notes notes = userRepository.findNoteByEmailAndNoteTitle(findNoteRequest.getEmail(),findNoteRequest.getTitle());
-        if(notes != null){
+    public FindNoteResponse findNote(FindNoteRequest findNoteRequest) {
+        Notes notes = userRepository.findNoteByEmailAndNoteTitle(findNoteRequest.getEmail(), findNoteRequest.getTitle());
+        if (notes != null) {
             notes.setTitle(findNoteRequest.getTitle());
             notes.setContent(findNoteRequest.getContent());
             notes.setDateCreated(LocalDateTime.now());
 
-//        FindNoteResponse findNoteResponse = new FindNoteResponse();
-//        findNoteResponse.setMessage("note found successfully");
-//        findNoteResponse.setTitle(findNoteRequest.getTitle());
-//        findNoteResponse.setContent(findNoteRequest.getContent());
-//        findNoteResponse.setDateCreated(LocalDateTime.now());
+            FindNoteResponse findNoteResponse = new FindNoteResponse();
+            findNoteResponse.setMessage("note found successfully");
+            findNoteResponse.setTitle(findNoteRequest.getTitle());
+            findNoteResponse.setContent(findNoteRequest.getContent());
+            findNoteResponse.setDateCreated(LocalDateTime.now());
         }
         throw new NoteNotFoundException("NOTE NOT FOUND");
     }
@@ -269,10 +273,9 @@ public class UserServiceImpl implements UserService{
     @Override
     public ShareNoteResponse shareNote(ShareNoteRequest shareNoteRequest) {
         validateLogin(shareNoteRequest.getSenderEmail());
-        validateLogin(shareNoteRequest.getReceiverEmail());
         User senderEmail = userRepository.findUserByEmail(shareNoteRequest.getSenderEmail()).orElseThrow(() -> new UserNotFoundException(String.format("%s not found", shareNoteRequest.getSenderEmail())));
         User receiverEmail = userRepository.findUserByEmail(shareNoteRequest.getSenderEmail()).orElseThrow(() -> new UserNotFoundException(String.format("%s not found", shareNoteRequest.getReceiverEmail())));
-        Notes sharedNote = noteRepository.findNotesByTitleAndId(shareNoteRequest.getNoteTitle(),shareNoteRequest.getId(), senderEmail).orElseThrow(() -> new NoteNotFoundException("note not found"));
+        Notes sharedNote = noteRepository.findNotesByTitle(shareNoteRequest.getNoteTitle(), senderEmail).orElseThrow(() -> new NoteNotFoundException("note not found"));
 
 
         List<Notes> sharedNotes = senderEmail.getSharedNotesList();
@@ -296,6 +299,8 @@ public class UserServiceImpl implements UserService{
 
             userRepository.save(receiverEmail);
 
+        } else {
+            throw new UserNoteListIsEmptyException("user list of note is empty");
         }
 
         ShareNoteResponse shareNoteResponse = new ShareNoteResponse();
@@ -314,7 +319,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UpdateNoteResponse updateNote(UpdateNotesRequest updateNotesRequest){
+    public UpdateNoteResponse updateNote(UpdateNotesRequest updateNotesRequest) {
         validateLogin(updateNotesRequest.getEmail());
         userRepository.findUserByEmail(updateNotesRequest.getEmail()).get();
         Optional<Notes> notes = noteRepository.findById(updateNotesRequest.getId());
@@ -324,7 +329,7 @@ public class UserServiceImpl implements UserService{
 
     public static UpdateNoteResponse getUpdateNoteResponse(UpdateNotesRequest updateNotesRequest, Optional<Notes> notes) {
 
-        if (notes.isPresent()){
+        if (notes.isPresent()) {
             Notes notes1 = notes.get();
             notes1.setTitle(updateNotesRequest.getTitle());
             notes1.setContent(updateNotesRequest.getContent());
@@ -334,28 +339,49 @@ public class UserServiceImpl implements UserService{
             UpdateNoteResponse updateNoteResponse = new UpdateNoteResponse();
             updateNoteResponse.setMessage("note updated successfully");
             return updateNoteResponse;
-        }
-        else {
+        } else {
             throw new NoteNotFoundException("note not found");
 
         }
     }
 
-    public void validateUser(String email){
+    public void validateUser(String email) {
         Optional<User> user = userRepository.findUserByEmail(email);
-        if(user.isPresent()) throw new UserExistException(String.format("%s already exist", email));
+        if (user.isPresent()) throw new UserExistException(String.format("%s already exist", email));
     }
 
-    public void validateLogin(String email){
-       User user = userRepository.findUserByEmail(email).orElseThrow(()->new UserNotFoundException("user not found"));
-        if(!user.isLoginStatus())throw new UserNotLoggedInException("Pls log in ");
+    public void validateLogin(String email) {
+        User user = userRepository.findUserByEmail(email).orElseThrow(() -> new UserNotFoundException("user not found"));
+        if (!user.isLoginStatus()) throw new UserNotLoggedInException("Pls log in ");
 
+
+//    //private void validateUserExistence(String email) {
+//        if(userRepository.findUserByEmail(email).isEmpty())
+//            throw new UserNotFoundException("""
+//                    user not found
+//                    do you mean Dark royal???🤣🤣🤣🤣""");
+//
     }
-    private void validateUserExistence(String email) {
-        if(userRepository.findUserByEmail(email).isEmpty())
-            throw new UserNotFoundException("""
-                    user not found
-                    do you mean Dark royal???🤣🤣🤣🤣""");
+
+    @Override
+    public UnlockNoteResponse unlockNote(UnlockNoteRequest unlockNoteRequest){
+        List<Notes> userNote = userRepository.findNotesByEmail(unlockNoteRequest.getEmail());
+        if (userNote != null) {
+            userNote.forEach(note -> {
+                note.setPassword(unlockNoteRequest.getPassword());
+                note.setLockStatus(false);
+                noteRepository.delete(note);
+            });
+
+            UnlockNoteResponse unlockNoteResponse = new UnlockNoteResponse();
+            unlockNoteResponse = new UnlockNoteResponse();
+            unlockNoteResponse.setLockStatus(false);
+            unlockNoteResponse.setEmail(unlockNoteRequest.getEmail());
+            unlockNoteResponse.setMessage("note unlocked successfully");
+            return unlockNoteResponse;
+
+        }
+        throw new UserNoteListIsEmptyException("user does not have any note");
     }
 
 

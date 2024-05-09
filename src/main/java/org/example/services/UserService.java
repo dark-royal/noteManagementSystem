@@ -49,4 +49,5 @@ public interface UserService {
 
     MakeSFavoriteResponse makeFavorites(MakeFavoritesRequest makeFavoritesRequest);
 
+    UnlockNoteResponse unlockNote(UnlockNoteRequest unlockNoteRequest);
 }

@@ -5,9 +5,7 @@ import org.example.data.models.Tags;
 import org.example.data.repositories.NoteRepository;
 import org.example.dtos.request.*;
 import org.example.dtos.responses.*;
-import org.example.exceptions.InvalidPasswordException;
-import org.example.exceptions.UserExistException;
-import org.example.exceptions.UserNotLoggedInException;
+import org.example.exceptions.*;
 import org.example.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -357,95 +355,95 @@ public class UserServiceImplTest {
 
         assertEquals(2, userService.getAllNote(registerUserRequest.getEmail()).size());
 
-            FindAllNoteRequest findAllNoteRequest = new FindAllNoteRequest();
-            findAllNoteRequest.setEmail(registerUserRequest.getEmail());
-            List<FindAllNoteResponse> userNotes = userService.findAllNotesByEmail(findAllNoteRequest);
+        FindAllNoteRequest findAllNoteRequest = new FindAllNoteRequest();
+        findAllNoteRequest.setEmail(registerUserRequest.getEmail());
+        List<FindAllNoteResponse> userNotes = userService.findAllNotesByEmail(findAllNoteRequest);
 
-            assertThat(userNotes).isNotEmpty();
+        assertThat(userNotes).isNotEmpty();
 
-            //assertEquals(2, userNotes.size());
-        }
-
-
-        @Test
-    public void testShareNote(){
-            RegisterUserRequest registerUserRequest = new RegisterUserRequest();
-            registerUserRequest.setEmail("janet@gmail.com");
-            registerUserRequest.setUsername("janet");
-            registerUserRequest.setPassword("janet1");
-            RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
-            assertThat(registerUserResponse.getMessage()).isNotNull();
-            //assertEquals(1, userService.findAllUser().size());
-
-            LoginUserRequest loginUserRequest = new LoginUserRequest();
-            loginUserRequest.setEmail(registerUserRequest.getEmail());
-            loginUserRequest.setPassword(registerUserRequest.getPassword());
-            LoginUserResponse response = userService.login(loginUserRequest);
-            assertThat(response.getMessage()).isNotNull();
-            assertTrue(userService.findUserById(registerUserResponse.getUserId()).isLoginStatus());
+        //assertEquals(2, userNotes.size());
+    }
 
 
-            RegisterUserRequest registerUserRequest1 = new RegisterUserRequest();
-            registerUserRequest1.setEmail("ola@gmail.com");
-            registerUserRequest1.setUsername("ola");
-            registerUserRequest1.setPassword("ola1");
-            RegisterUserResponse registerUserResponse1 = userService.register(registerUserRequest1);
-            assertThat(registerUserResponse1.getMessage()).isNotNull();
-            assertEquals(2, userService.findAllUser().size());
-
-            LoginUserRequest loginUserRequest1 = new LoginUserRequest();
-            loginUserRequest1.setEmail(registerUserRequest1.getEmail());
-            loginUserRequest1.setPassword(registerUserRequest1.getPassword());
-            LoginUserResponse response1 = userService.login(loginUserRequest1);
-            assertThat(response1.getMessage()).isNotNull();
-            assertTrue(userService.findUserById(registerUserResponse1.getUserId()).isLoginStatus());
+    @Test
+    public void testShareNote() {
+        RegisterUserRequest registerUserRequest = new RegisterUserRequest();
+        registerUserRequest.setEmail("janet@gmail.com");
+        registerUserRequest.setUsername("janet");
+        registerUserRequest.setPassword("janet1");
+        RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
+        assertThat(registerUserResponse.getMessage()).isNotNull();
 
 
-            CreateNoteRequest createNoteRequest = new CreateNoteRequest();
-            createNoteRequest.setTitle("array and stream");
-            createNoteRequest.setContent("It is in chapter seven");
-            createNoteRequest.setEmail(registerUserRequest.getEmail());
-            createNoteRequest.setDateCreated(LocalDateTime.now());
-
-            Tags tags = new Tags();
-            tags.setName("java");
-            createNoteRequest.setTagName(tags);
-
-            CreateNoteResponse response2 = userService.createNote(createNoteRequest);
-            assertThat(response2.getMessage()).isNotNull();
-            assertEquals(1, userService.getAllNote(registerUserRequest.getEmail()).size());
+        LoginUserRequest loginUserRequest = new LoginUserRequest();
+        loginUserRequest.setEmail(registerUserRequest.getEmail());
+        loginUserRequest.setPassword(registerUserRequest.getPassword());
+        LoginUserResponse response = userService.login(loginUserRequest);
+        assertThat(response.getMessage()).isNotNull();
+        assertTrue(userService.findUserById(registerUserResponse.getUserId()).isLoginStatus());
 
 
-            CreateNoteRequest createNoteRequest1 = new CreateNoteRequest();
-            createNoteRequest1.setTitle("Lambdas and stream");
-            createNoteRequest1.setContent("It is in chapter seventeen");
-            createNoteRequest1.setEmail(registerUserRequest.getEmail());
-            createNoteRequest1.setDateCreated(LocalDateTime.now());
+        RegisterUserRequest registerUserRequest1 = new RegisterUserRequest();
+        registerUserRequest1.setEmail("ola@gmail.com");
+        registerUserRequest1.setUsername("ola");
+        registerUserRequest1.setPassword("ola1");
+        RegisterUserResponse registerUserResponse1 = userService.register(registerUserRequest1);
+        assertThat(registerUserResponse1.getMessage()).isNotNull();
+        assertEquals(2, userService.findAllUser().size());
 
-            Tags tags1 = new Tags();
-            tags1.setName("java");
-            createNoteRequest1.setTagName(tags1);
+        LoginUserRequest loginUserRequest1 = new LoginUserRequest();
+        loginUserRequest1.setEmail(registerUserRequest1.getEmail());
+        loginUserRequest1.setPassword(registerUserRequest1.getPassword());
+        LoginUserResponse response1 = userService.login(loginUserRequest1);
+        assertThat(response1.getMessage()).isNotNull();
+        assertTrue(userService.findUserById(registerUserResponse1.getUserId()).isLoginStatus());
 
-            CreateNoteResponse response3 = userService.createNote(createNoteRequest1);
-            assertThat(response3.getMessage()).isNotNull();
 
-            assertEquals(2, userService.getAllNote(registerUserRequest.getEmail()).size());
+        CreateNoteRequest createNoteRequest = new CreateNoteRequest();
+        createNoteRequest.setTitle("array and stream");
+        createNoteRequest.setContent("It is in chapter seven");
+        createNoteRequest.setEmail(registerUserRequest.getEmail());
+        createNoteRequest.setDateCreated(LocalDateTime.now());
 
-            ShareNoteRequest shareNoteRequest = new ShareNoteRequest();
-            shareNoteRequest.setReceiverEmail(registerUserRequest1.getEmail());
-            shareNoteRequest.setSenderEmail(registerUserRequest.getEmail());
-            shareNoteRequest.setId(createNoteRequest.getId());
-            shareNoteRequest.setNoteTitle(createNoteRequest.getTitle());
-            shareNoteRequest.setNoteContent(createNoteRequest.getContent());
+        Tags tags = new Tags();
+        tags.setName("java");
+        createNoteRequest.setTagName(tags);
 
-            ShareNoteResponse shareNoteResponse = userService.shareNote(shareNoteRequest);
-            assertThat(shareNoteResponse.getMessage()).isNotNull();
-            assertEquals(2,userService.getAllNote(registerUserRequest.getEmail()).size());
-            assertEquals(1,userService.getAllNote(registerUserRequest1.getEmail()).size());
+        CreateNoteResponse response2 = userService.createNote(createNoteRequest);
+        assertThat(response2.getMessage()).isNotNull();
+        assertEquals(1, userService.getAllNote(registerUserRequest.getEmail()).size());
+
+
+        CreateNoteRequest createNoteRequest1 = new CreateNoteRequest();
+        createNoteRequest1.setTitle("Lambdas and stream");
+        createNoteRequest1.setContent("It is in chapter seventeen");
+        createNoteRequest1.setEmail(registerUserRequest.getEmail());
+        createNoteRequest1.setDateCreated(LocalDateTime.now());
+
+        Tags tags1 = new Tags();
+        tags1.setName("java");
+        createNoteRequest1.setTagName(tags1);
+
+        CreateNoteResponse response3 = userService.createNote(createNoteRequest1);
+        assertThat(response3.getMessage()).isNotNull();
+
+        assertEquals(2, userService.getAllNote(registerUserRequest.getEmail()).size());
+
+        ShareNoteRequest shareNoteRequest = new ShareNoteRequest();
+        shareNoteRequest.setReceiverEmail(registerUserRequest1.getEmail());
+        shareNoteRequest.setSenderEmail(registerUserRequest.getEmail());
+        shareNoteRequest.setId(createNoteRequest.getId());
+        shareNoteRequest.setNoteTitle(createNoteRequest.getTitle());
+        shareNoteRequest.setNoteContent(createNoteRequest.getContent());
+
+        ShareNoteResponse shareNoteResponse = userService.shareNote(shareNoteRequest);
+        assertThat(shareNoteResponse.getMessage()).isNotNull();
+        assertEquals(2, userService.getAllNote(registerUserRequest.getEmail()).size());
+        assertEquals(1, userService.getAllNote(registerUserRequest1.getEmail()).size());
     }
 
     @Test
-    public void lockNote(){
+    public void lockNote() {
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
         registerUserRequest.setEmail("orisha@gmail.com");
         registerUserRequest.setUsername("orisha");
@@ -490,15 +488,260 @@ public class UserServiceImplTest {
         lockNoteRequest.setEmail(findAllNoteRequest.getEmail());
         LockNoteResponse lockNoteResponse = userService.lockNote(lockNoteRequest);
         assertTrue(lockNoteResponse.isLockStatus());
-//        int count=0;
-//        for(FindAllNoteResponse note : userNotes) {
-//            System.out.println(++count);
-//            assertTrue(note.isLockStatus());
-//        }
+
+    }
+
+    @Test
+    public void testThatNoteCannotBeDeletedWithoutBeingCreatedThrowNoteNotFoundException() {
+        RegisterUserRequest registerUserRequest = new RegisterUserRequest();
+        registerUserRequest.setEmail("aruwa@gmail.com");
+        registerUserRequest.setUsername("aruwa");
+        registerUserRequest.setPassword("aruwa1");
+        RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
+        assertThat(registerUserResponse.getMessage()).isNotNull();
+        assertEquals(1, userService.findAllUser().size());
+
+        LoginUserRequest loginUserRequest = new LoginUserRequest();
+        loginUserRequest.setEmail(registerUserRequest.getEmail());
+        loginUserRequest.setPassword(registerUserRequest.getPassword());
+        LoginUserResponse response = userService.login(loginUserRequest);
+        assertThat(response.getMessage()).isNotNull();
+        assertTrue(userService.findUserById(registerUserResponse.getUserId()).isLoginStatus());
+
+
+        DeleteNoteRequest deleteNoteRequest = new DeleteNoteRequest();
+        deleteNoteRequest.setEmail(registerUserRequest.getEmail());
+        assertThrows(NoteNotFoundException.class, () -> userService.deleteNote(deleteNoteRequest));
 
 
     }
 
+    @Test
+    public void testThatUserNotFoundNoteCannotBeDeleted(){
+        RegisterUserRequest registerUserRequest = new RegisterUserRequest();
+        registerUserRequest.setEmail("bally@gmail.com");
+        registerUserRequest.setUsername("bally");
+        registerUserRequest.setPassword("bally1");
+        RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
+        assertThat(registerUserResponse.getMessage()).isNotNull();
+        assertEquals(1, userService.findAllUser().size());
+
+
+        LoginUserRequest loginUserRequest = new LoginUserRequest();
+        loginUserRequest.setEmail(registerUserRequest.getEmail());
+        loginUserRequest.setPassword(registerUserRequest.getPassword());
+        LoginUserResponse response = userService.login(loginUserRequest);
+        assertThat(response.getMessage()).isNotNull();
+        assertTrue(userService.findUserById(registerUserResponse.getUserId()).isLoginStatus());
+
+
+        RegisterUserRequest registerUserRequest1 = new RegisterUserRequest();
+        registerUserRequest1.setEmail("inu@gmail.com");
+        registerUserRequest1.setUsername("inu");
+        registerUserRequest1.setPassword("inu1");
+        RegisterUserResponse registerUserResponse1 = userService.register(registerUserRequest1);
+        assertThat(registerUserResponse1.getMessage()).isNotNull();
+        assertEquals(2, userService.findAllUser().size());
+
+
+        LoginUserRequest loginUserRequest1 = new LoginUserRequest();
+        loginUserRequest1.setEmail(registerUserRequest1.getEmail());
+        loginUserRequest1.setPassword(registerUserRequest1.getPassword());
+        LoginUserResponse response1 = userService.login(loginUserRequest1);
+        assertThat(response1.getMessage()).isNotNull();
+        assertTrue(userService.findUserById(registerUserResponse.getUserId()).isLoginStatus());
+
+
+        CreateNoteRequest createNoteRequest = new CreateNoteRequest();
+        createNoteRequest.setTitle("loop and if statement");
+        createNoteRequest.setContent("It is in chapter 4");
+        createNoteRequest.setEmail(registerUserRequest1.getEmail());
+        createNoteRequest.setDateCreated(LocalDateTime.now());
+
+        Tags tags = new Tags();
+        tags.setName("java");
+        createNoteRequest.setTagName(tags);
+
+        CreateNoteResponse response2 = userService.createNote(createNoteRequest);
+        assertThat(response2.getMessage()).isNotNull();
+
+
+        CreateNoteRequest createNoteRequest1 = new CreateNoteRequest();
+        createNoteRequest1.setTitle("industrial design");
+        createNoteRequest1.setContent("mr dapo class");
+        createNoteRequest1.setEmail(registerUserRequest1.getEmail());
+        createNoteRequest1.setDateCreated(LocalDateTime.now());
+
+        Tags tags1 = new Tags();
+        tags1.setName("javas");
+        createNoteRequest1.setTagName(tags1);
+
+        CreateNoteResponse response3 = userService.createNote(createNoteRequest1);
+        assertThat(response3.getMessage()).isNotNull();
+
+        assertEquals(2, userService.getAllNote(registerUserRequest.getEmail()).size());
+
+
+        DeleteNoteRequest deleteNoteRequest = new DeleteNoteRequest();
+        deleteNoteRequest.setEmail("samuel@gmail.com");
+        deleteNoteRequest.setTitle("industrial design");
+        assertThrows(UserNotFoundException.class,()->userService.deleteNote(deleteNoteRequest));
 
     }
+
+    @Test
+    public void testThatNoteNotBelongingAnotherUserCannotBeDeleted(){
+        RegisterUserRequest registerUserRequest = new RegisterUserRequest();
+        registerUserRequest.setEmail("bally@gmail.com");
+        registerUserRequest.setUsername("bally");
+        registerUserRequest.setPassword("bally1");
+        RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
+        assertThat(registerUserResponse.getMessage()).isNotNull();
+        assertEquals(1, userService.findAllUser().size());
+
+
+        LoginUserRequest loginUserRequest = new LoginUserRequest();
+        loginUserRequest.setEmail(registerUserRequest.getEmail());
+        loginUserRequest.setPassword(registerUserRequest.getPassword());
+        LoginUserResponse response = userService.login(loginUserRequest);
+        assertThat(response.getMessage()).isNotNull();
+        assertTrue(userService.findUserById(registerUserResponse.getUserId()).isLoginStatus());
+
+
+        RegisterUserRequest registerUserRequest1 = new RegisterUserRequest();
+        registerUserRequest1.setEmail("inu@gmail.com");
+        registerUserRequest1.setUsername("inu");
+        registerUserRequest1.setPassword("inu1");
+        RegisterUserResponse registerUserResponse1 = userService.register(registerUserRequest1);
+        assertThat(registerUserResponse1.getMessage()).isNotNull();
+        assertEquals(2, userService.findAllUser().size());
+
+
+        LoginUserRequest loginUserRequest1 = new LoginUserRequest();
+        loginUserRequest1.setEmail(registerUserRequest1.getEmail());
+        loginUserRequest1.setPassword(registerUserRequest1.getPassword());
+        LoginUserResponse response1 = userService.login(loginUserRequest1);
+        assertThat(response1.getMessage()).isNotNull();
+        assertTrue(userService.findUserById(registerUserResponse1.getUserId()).isLoginStatus());
+
+
+        CreateNoteRequest createNoteRequest = new CreateNoteRequest();
+        createNoteRequest.setTitle("loop and if statement");
+        createNoteRequest.setContent("It is in chapter 4");
+        createNoteRequest.setEmail(registerUserRequest1.getEmail());
+        createNoteRequest.setDateCreated(LocalDateTime.now());
+
+        Tags tags = new Tags();
+        tags.setName("java");
+        createNoteRequest.setTagName(tags);
+
+        CreateNoteResponse response2 = userService.createNote(createNoteRequest);
+        assertThat(response2.getMessage()).isNotNull();
+
+
+        CreateNoteRequest createNoteRequest1 = new CreateNoteRequest();
+        createNoteRequest1.setTitle("industrial design");
+        createNoteRequest1.setContent("mr dapo class");
+        createNoteRequest1.setEmail(registerUserRequest1.getEmail());
+        createNoteRequest1.setDateCreated(LocalDateTime.now());
+
+        Tags tags1 = new Tags();
+        tags1.setName("javas");
+        createNoteRequest1.setTagName(tags1);
+
+        CreateNoteResponse response3 = userService.createNote(createNoteRequest1);
+        assertThat(response3.getMessage()).isNotNull();
+
+        assertEquals(2, userService.getAllNote(registerUserRequest.getEmail()).size());
+
+
+        DeleteNoteRequest deleteNoteRequest = new DeleteNoteRequest();
+        deleteNoteRequest.setEmail(createNoteRequest.getEmail());
+        deleteNoteRequest.setTitle("industrial design");
+        assertThrows(NoteDoesNotBelongToUserException.class,()->userService.deleteNote(deleteNoteRequest));
+
+    }
+
+    @Test
+    public void testNoteCannotBeCreatedWithoutLoggingIn(){
+
+        RegisterUserRequest registerUserRequest1 = new RegisterUserRequest();
+        registerUserRequest1.setEmail("inu@gmail.com");
+        registerUserRequest1.setUsername("inu");
+        registerUserRequest1.setPassword("inu1");
+        RegisterUserResponse registerUserResponse1 = userService.register(registerUserRequest1);
+        assertThat(registerUserResponse1.getMessage()).isNotNull();
+        assertEquals(1, userService.findAllUser().size());
+
+
+        CreateNoteRequest createNoteRequest = new CreateNoteRequest();
+        createNoteRequest.setTitle("loop and if statement");
+        createNoteRequest.setContent("It is in chapter 4");
+        createNoteRequest.setEmail(registerUserRequest1.getEmail());
+        createNoteRequest.setDateCreated(LocalDateTime.now());
+
+        Tags tags = new Tags();
+        tags.setName("java");
+        createNoteRequest.setTagName(tags);
+        assertThrows(UserNotLoggedInException.class,()->userService.createNote(createNoteRequest));
+
+
+    }
+
+    @Test
+    public void unlockNote() {
+        RegisterUserRequest registerUserRequest = new RegisterUserRequest();
+        registerUserRequest.setEmail("orisha@gmail.com");
+        registerUserRequest.setUsername("orisha");
+        registerUserRequest.setPassword("orisha1");
+        RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
+        assertThat(registerUserResponse.getMessage()).isNotNull();
+        assertEquals(1, userService.findAllUser().size());
+
+        LoginUserRequest loginUserRequest = new LoginUserRequest();
+        loginUserRequest.setEmail(registerUserRequest.getEmail());
+        loginUserRequest.setPassword(registerUserRequest.getPassword());
+        LoginUserResponse response = userService.login(loginUserRequest);
+        assertThat(response.getMessage()).isNotNull();
+        assertTrue(userService.findUserById(registerUserResponse.getUserId()).isLoginStatus());
+
+
+        CreateNoteRequest createNoteRequest = new CreateNoteRequest();
+        createNoteRequest.setTitle("Agba coder");
+        createNoteRequest.setContent("He is agba coder");
+        createNoteRequest.setEmail(registerUserRequest.getEmail());
+        createNoteRequest.setDateCreated(LocalDateTime.now());
+
+        Tags tags = new Tags();
+        tags.setName("programming");
+        createNoteRequest.setTagName(tags);
+
+        CreateNoteResponse response1 = userService.createNote(createNoteRequest);
+        assertThat(response1.getMessage()).isNotNull();
+        assertEquals(1, userService.getAllNote(registerUserRequest.getEmail()).size());
+
+
+        FindAllNoteRequest findAllNoteRequest = new FindAllNoteRequest();
+        findAllNoteRequest.setEmail(registerUserRequest.getEmail());
+        List<FindAllNoteResponse> userNotes = userService.findAllNotesByEmail(findAllNoteRequest);
+
+        assertThat(userNotes).isNotEmpty();
+
+        assertEquals(1, userNotes.size());
+
+        LockNoteRequest lockNoteRequest = new LockNoteRequest();
+        lockNoteRequest.setPassword("1234");
+        lockNoteRequest.setEmail(findAllNoteRequest.getEmail());
+        LockNoteResponse lockNoteResponse = userService.lockNote(lockNoteRequest);
+        assertTrue(lockNoteResponse.isLockStatus());
+
+        UnlockNoteRequest unlockNoteRequest = new UnlockNoteRequest();
+        unlockNoteRequest.setPassword("1234");
+        unlockNoteRequest.setEmail(findAllNoteRequest.getEmail());
+        UnlockNoteResponse unlockNoteResponse = userService.unlockNote(unlockNoteRequest)
+        assertFalse(unlockNoteResponse.isLockStatus());
+
+    }
+
+}
 

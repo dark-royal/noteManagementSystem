@@ -12,6 +12,7 @@ public class Notes {
     @Id
     private String id;
     private String title;
+    private String email;
     private String content;
     private User user;
     private LocalDateTime dateCreated;
