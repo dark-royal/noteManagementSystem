@@ -13,12 +13,12 @@ public interface NoteRepository extends MongoRepository<Notes,String> {
 
 
 
-    Notes findNotesByTitle(String title, User senderEmail);
+    Optional<Notes> findNotesByTitleAndEmail(String title, User senderEmail);
 
-    Optional<Notes> findNotesById(String id, User sendersEmail);
+    Optional<Notes> findNotesById(String id);
 
 
-    Notes findByTitle(String title,User email);
+    Notes findByTitle(String title);
 
     List<Tags> findByTags(String tagName);
 

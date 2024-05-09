@@ -53,7 +53,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public RegisterUserResponse register(RegisterUserRequest registerUserRequest) {
+        validateEmail(registerUserRequest.getEmail());
         validateUser(registerUserRequest.getEmail());
+        validatePassword(registerUserRequest.getPassword());
         User user = new User();
         user.setUsername(registerUserRequest.getUsername());
         user.setPassword(registerUserRequest.getPassword());
@@ -175,7 +177,7 @@ public class UserServiceImpl implements UserService {
             throw new NoteNotFoundException("Note with title '" + deleteNoteRequest.getTitle() + "' not found");
         }
 
-        User user = userRepository.findUserByEmail(deleteNoteRequest.getEmail()).orElse(null);
+        User user = userRepository.findUserByEmail(deleteNoteRequest.getEmail()).orElseThrow(()->new UserNotFoundException("user not found"));
         if (user == null) {
             DeleteNoteResponse response = new DeleteNoteResponse();
             response.setMessage("User with email '" + deleteNoteRequest.getEmail() + "' not found");
@@ -275,7 +277,8 @@ public class UserServiceImpl implements UserService {
         validateLogin(shareNoteRequest.getSenderEmail());
         User senderEmail = userRepository.findUserByEmail(shareNoteRequest.getSenderEmail()).orElseThrow(() -> new UserNotFoundException(String.format("%s not found", shareNoteRequest.getSenderEmail())));
         User receiverEmail = userRepository.findUserByEmail(shareNoteRequest.getSenderEmail()).orElseThrow(() -> new UserNotFoundException(String.format("%s not found", shareNoteRequest.getReceiverEmail())));
-        Notes sharedNote = noteRepository.findNotesByTitle(shareNoteRequest.getNoteTitle(), senderEmail).orElseThrow(() -> new NoteNotFoundException("note not found"));
+        Notes sharedNote = noteRepository.findNotesByTitleAndEmail(shareNoteRequest.getNoteTitle(), senderEmail).orElseThrow(() -> new NoteNotFoundException("note not found"));
+
 
 
         List<Notes> sharedNotes = senderEmail.getSharedNotesList();
@@ -385,4 +388,21 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    private String  validateEmail(String email) {
+        String regex = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
+        if (email.matches(regex)) {
+            return email;
+        } else {
+            throw new InvalidEmailFormat("invalid email");
+        }
+
+    }
+
+    private String validatePassword(String password){
+        String regex = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$";
+        if(password.matches(regex)){
+            return password;
+        }
+        throw new InvalidPasswordFormatException("password must be 8 character, must include special characters, number,upper case, lower case ");
+    }
 }

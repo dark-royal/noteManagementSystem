@@ -11,6 +11,7 @@ import org.example.dtos.request.FindNoteRequest;
 import org.example.dtos.request.UpdateNotesRequest;
 import org.example.dtos.responses.CreateNoteResponse;
 import org.example.dtos.responses.UpdateNoteResponse;
+import org.example.exceptions.InvalidEmailFormat;
 import org.example.exceptions.NoteAlreadyExistException;
 import org.example.exceptions.NoteNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +69,7 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public void deleteNote(DeleteNoteRequest deleteNoteRequest) {
-        Notes notes = noteRepository.findNotesByTitle(deleteNoteRequest.getTitle(), senderEmail);
+        Notes notes = noteRepository.findByTitle(deleteNoteRequest.getTitle());
         if (notes == null) throw new NoteNotFoundException("Note not found");
         else {
             noteRepository.delete(notes);
@@ -89,7 +90,7 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public Notes findNote(FindNoteRequest findNoteRequest) {
-        Notes notes = noteRepository.findNotesByTitle(findNoteRequest.getTitle(), senderEmail);
+        Notes notes = noteRepository.findByTitle(findNoteRequest.getTitle());
         if (notes == null) throw new NoteNotFoundException("Note not found");
         else {
             return notes;
@@ -139,6 +140,10 @@ public class NoteServiceImpl implements NoteService {
     }
 
 
-}
+
+    }
+
+
+
 
 

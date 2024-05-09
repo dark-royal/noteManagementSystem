@@ -39,7 +39,7 @@ public class UserServiceImplTest {
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
         registerUserRequest.setEmail("praise@gmail.com");
         registerUserRequest.setUsername("praisey");
-        registerUserRequest.setPassword("myLife");
+        registerUserRequest.setPassword("myLife1@");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
         assertEquals(1, userService.findAllUser().size());
@@ -52,7 +52,7 @@ public class UserServiceImplTest {
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
         registerUserRequest.setEmail("praise1@gmail.com");
         registerUserRequest.setUsername("praiseyo");
-        registerUserRequest.setPassword("myLife1");
+        registerUserRequest.setPassword("myLife123@");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
         assertEquals(1, userService.findAllUser().size());
@@ -65,7 +65,7 @@ public class UserServiceImplTest {
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
         registerUserRequest.setEmail("praise2@gmail.com");
         registerUserRequest.setUsername("praisey1");
-        registerUserRequest.setPassword("myLife1");
+        registerUserRequest.setPassword("myLife1@");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
         assertEquals(1, userService.findAllUser().size());
@@ -84,7 +84,7 @@ public class UserServiceImplTest {
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
         registerUserRequest.setEmail("praise3@gmail.com");
         registerUserRequest.setUsername("praisey2");
-        registerUserRequest.setPassword("myLife");
+        registerUserRequest.setPassword("myLife1@");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
         assertEquals(1, userService.findAllUser().size());
@@ -110,7 +110,7 @@ public class UserServiceImplTest {
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
         registerUserRequest.setEmail("praise4@gmail.com");
         registerUserRequest.setUsername("praisey3");
-        registerUserRequest.setPassword("myLife4");
+        registerUserRequest.setPassword("myLife1@");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
         assertEquals(1, userService.findAllUser().size());
@@ -128,7 +128,7 @@ public class UserServiceImplTest {
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
         registerUserRequest.setEmail("praise5@gmail.com");
         registerUserRequest.setUsername("praisey5");
-        registerUserRequest.setPassword("myLife5");
+        registerUserRequest.setPassword("myLife1@");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
         assertEquals(1, userService.findAllUser().size());
@@ -145,7 +145,7 @@ public class UserServiceImplTest {
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
         registerUserRequest.setEmail("praise7@gmail.com");
         registerUserRequest.setUsername("praisey7");
-        registerUserRequest.setPassword("myLife7");
+        registerUserRequest.setPassword("myLife1@");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
         assertEquals(1, userService.findAllUser().size());
@@ -180,7 +180,7 @@ public class UserServiceImplTest {
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
         registerUserRequest.setEmail("praise8@gmail.com");
         registerUserRequest.setUsername("praise6");
-        registerUserRequest.setPassword("myLife8");
+        registerUserRequest.setPassword("myLife1@");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
         assertEquals(1, userService.findAllUser().size());
@@ -224,7 +224,7 @@ public class UserServiceImplTest {
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
         registerUserRequest.setEmail("praise8@gmail.com");
         registerUserRequest.setUsername("praisey12");
-        registerUserRequest.setPassword("myLife22");
+        registerUserRequest.setPassword("myLife1@");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
         assertEquals(1, userService.findAllUser().size());
@@ -267,7 +267,7 @@ public class UserServiceImplTest {
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
         registerUserRequest.setEmail("praise13@gmail.com");
         registerUserRequest.setUsername("praisey14");
-        registerUserRequest.setPassword("myLife0");
+        registerUserRequest.setPassword("myLife1@");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
         assertEquals(1, userService.findAllUser().size());
@@ -312,7 +312,7 @@ public class UserServiceImplTest {
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
         registerUserRequest.setEmail("abbey@gmail.com");
         registerUserRequest.setUsername("abbey");
-        registerUserRequest.setPassword("abbey1");
+        registerUserRequest.setPassword("Abbey11@");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
         assertEquals(1, userService.findAllUser().size());
@@ -370,7 +370,7 @@ public class UserServiceImplTest {
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
         registerUserRequest.setEmail("janet@gmail.com");
         registerUserRequest.setUsername("janet");
-        registerUserRequest.setPassword("janet1");
+        registerUserRequest.setPassword("Janet11@");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
 
@@ -386,7 +386,7 @@ public class UserServiceImplTest {
         RegisterUserRequest registerUserRequest1 = new RegisterUserRequest();
         registerUserRequest1.setEmail("ola@gmail.com");
         registerUserRequest1.setUsername("ola");
-        registerUserRequest1.setPassword("ola1");
+        registerUserRequest1.setPassword("Ola1wer@3");
         RegisterUserResponse registerUserResponse1 = userService.register(registerUserRequest1);
         assertThat(registerUserResponse1.getMessage()).isNotNull();
         assertEquals(2, userService.findAllUser().size());
@@ -447,7 +447,7 @@ public class UserServiceImplTest {
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
         registerUserRequest.setEmail("orisha@gmail.com");
         registerUserRequest.setUsername("orisha");
-        registerUserRequest.setPassword("orisha1");
+        registerUserRequest.setPassword("Orisha1@");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
         assertEquals(1, userService.findAllUser().size());
@@ -496,7 +496,7 @@ public class UserServiceImplTest {
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
         registerUserRequest.setEmail("aruwa@gmail.com");
         registerUserRequest.setUsername("aruwa");
-        registerUserRequest.setPassword("aruwa1");
+        registerUserRequest.setPassword("aRuwa121@");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
         assertEquals(1, userService.findAllUser().size());
@@ -521,7 +521,7 @@ public class UserServiceImplTest {
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
         registerUserRequest.setEmail("bally@gmail.com");
         registerUserRequest.setUsername("bally");
-        registerUserRequest.setPassword("bally1");
+        registerUserRequest.setPassword("Bally12$");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
         assertEquals(1, userService.findAllUser().size());
@@ -538,7 +538,7 @@ public class UserServiceImplTest {
         RegisterUserRequest registerUserRequest1 = new RegisterUserRequest();
         registerUserRequest1.setEmail("inu@gmail.com");
         registerUserRequest1.setUsername("inu");
-        registerUserRequest1.setPassword("inu1");
+        registerUserRequest1.setPassword("Inu1@13q");
         RegisterUserResponse registerUserResponse1 = userService.register(registerUserRequest1);
         assertThat(registerUserResponse1.getMessage()).isNotNull();
         assertEquals(2, userService.findAllUser().size());
@@ -594,7 +594,7 @@ public class UserServiceImplTest {
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
         registerUserRequest.setEmail("bally@gmail.com");
         registerUserRequest.setUsername("bally");
-        registerUserRequest.setPassword("bally1");
+        registerUserRequest.setPassword("Bally1#pa");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
         assertEquals(1, userService.findAllUser().size());
@@ -611,7 +611,7 @@ public class UserServiceImplTest {
         RegisterUserRequest registerUserRequest1 = new RegisterUserRequest();
         registerUserRequest1.setEmail("inu@gmail.com");
         registerUserRequest1.setUsername("inu");
-        registerUserRequest1.setPassword("inu1");
+        registerUserRequest1.setPassword("Inu112@a");
         RegisterUserResponse registerUserResponse1 = userService.register(registerUserRequest1);
         assertThat(registerUserResponse1.getMessage()).isNotNull();
         assertEquals(2, userService.findAllUser().size());
@@ -668,7 +668,7 @@ public class UserServiceImplTest {
         RegisterUserRequest registerUserRequest1 = new RegisterUserRequest();
         registerUserRequest1.setEmail("inu@gmail.com");
         registerUserRequest1.setUsername("inu");
-        registerUserRequest1.setPassword("inu1");
+        registerUserRequest1.setPassword("Tinuade$%4");
         RegisterUserResponse registerUserResponse1 = userService.register(registerUserRequest1);
         assertThat(registerUserResponse1.getMessage()).isNotNull();
         assertEquals(1, userService.findAllUser().size());
@@ -693,7 +693,7 @@ public class UserServiceImplTest {
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
         registerUserRequest.setEmail("orisha@gmail.com");
         registerUserRequest.setUsername("orisha");
-        registerUserRequest.setPassword("orisha1");
+        registerUserRequest.setPassword("Orisha1%2");
         RegisterUserResponse registerUserResponse = userService.register(registerUserRequest);
         assertThat(registerUserResponse.getMessage()).isNotNull();
         assertEquals(1, userService.findAllUser().size());
@@ -738,10 +738,27 @@ public class UserServiceImplTest {
         UnlockNoteRequest unlockNoteRequest = new UnlockNoteRequest();
         unlockNoteRequest.setPassword("1234");
         unlockNoteRequest.setEmail(findAllNoteRequest.getEmail());
-        UnlockNoteResponse unlockNoteResponse = userService.unlockNote(unlockNoteRequest)
+        UnlockNoteResponse unlockNoteResponse = userService.unlockNote(unlockNoteRequest);
         assertFalse(unlockNoteResponse.isLockStatus());
 
     }
 
+    @Test
+    public void testThatEmailFormatMustBeCorrectWhenRegistering_elseThrowInvalidEmailException(){
+        RegisterUserRequest registerUserRequest = new RegisterUserRequest();
+        registerUserRequest.setEmail("orishagmail.com");
+        registerUserRequest.setUsername("orisha");
+        registerUserRequest.setPassword("Orisha1%2");
+        assertThrows(InvalidEmailFormat.class,()-> userService.register(registerUserRequest));
+    }
+
+    @Test
+    public void testThatPasswordFormatIsInvalid_throwInavlidPasswordFormatException(){
+        RegisterUserRequest registerUserRequest = new RegisterUserRequest();
+        registerUserRequest.setEmail("orisha@gmail.com");
+        registerUserRequest.setUsername("orisha");
+        registerUserRequest.setPassword("Orisha");
+        assertThrows(InvalidPasswordFormatException.class,()-> userService.register(registerUserRequest));
+    }
 }
 
