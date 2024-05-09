@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface NoteRepository extends MongoRepository<Notes,String> {
 
 
-
+    Optional<List<Notes>> findNotesByEmail(String email);
 
     Optional<Notes> findNotesByTitleAndEmail(String title, String email);
 
@@ -24,6 +24,8 @@ public interface NoteRepository extends MongoRepository<Notes,String> {
 
     Optional<List<Notes>> findNoteByUser(User note);
 
+
+    List<Notes> findNotesByUser(User user);
 
 }
 

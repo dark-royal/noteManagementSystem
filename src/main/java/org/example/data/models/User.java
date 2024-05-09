@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -18,11 +19,11 @@ public class User {
     private String noteContent;
 
     @DBRef
-    private List<Notes> notesList;
+    private List<Notes> notesList = new ArrayList<>();;
     @DBRef
-    public List<Notes> sharedNotesList;
+    public List<Notes> sharedNotesList = new ArrayList<>();;
     @DBRef
-    private List<Notes> receiverReceivedNote;
+    private List<Notes> receiverReceivedNote = new ArrayList<>();;
 
 
     public void shareNote(List<Notes> sharedNotes) {

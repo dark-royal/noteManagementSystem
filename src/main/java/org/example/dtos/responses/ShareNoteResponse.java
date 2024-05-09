@@ -14,21 +14,12 @@ public class ShareNoteResponse {
     private String senderEmail;
     private String receiverEmail;
     private LocalDateTime dateShared;
+    private String id;
 
-
-
-    public void setNoteShared() {
+    public ShareNoteResponse(){
+        dateShared = LocalDateTime.now();
     }
 
-    public void setNoteTitle() {
-    }
 
-    public void setDateShared() {
-    }
 
-    public void setSenderEmail() {
-    }
-
-    public void setReceiverEmail() {
-    }
 }

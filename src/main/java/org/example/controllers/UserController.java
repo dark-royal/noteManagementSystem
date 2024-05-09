@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/User")
 public class UserController {
 
@@ -25,7 +26,7 @@ public class UserController {
         try {
             RegisterUserResponse response = userService.register(registerUserRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (UserExistException e) {
+        } catch (UserExistException | InvalidPasswordFormatException | InvalidEmailFormat e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
 

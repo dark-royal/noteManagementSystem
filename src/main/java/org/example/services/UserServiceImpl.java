@@ -113,18 +113,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<Notes> getAllNote(String email) {
-        //List<Notes> notesList = this.noteService.findAllUserNote(userRepository.findUserByEmail(email).get());
-//        return noteRepository.findAll();
-//        Optional<User> userOptional = userRepository.findUserByEmail(email);
-//        if (userOptional.isPresent()) {
-//            User user = userOptional.get();
-//            List<Notes> notesList = noteService.findAllUserNote(user);
-//            return notesList;
-//        } else {
-//            throw new UserNotFoundException("user not found");
-//
-//        }
-        return noteRepository.findAll();
+        User user = userRepository.findUserByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        List<Notes> notes = noteRepository.findNotesByUser(user);
+
+        if (notes.isEmpty()) {
+            throw new NoteNotFoundException("No notes found for this user");
+        }
+
+        return notes;
     }
 
     @Override
@@ -277,8 +274,11 @@ public class UserServiceImpl implements UserService {
         validateLogin(shareNoteRequest.getSenderEmail());
         User senderEmail = userRepository.findUserByEmail(shareNoteRequest.getSenderEmail()).orElseThrow(() -> new UserNotFoundException(String.format("%s not found", shareNoteRequest.getSenderEmail())));
         User receiverEmail = userRepository.findUserByEmail(shareNoteRequest.getSenderEmail()).orElseThrow(() -> new UserNotFoundException(String.format("%s not found", shareNoteRequest.getReceiverEmail())));
-        Notes sharedNote = noteRepository.findNotesByTitleAndEmail(shareNoteRequest.getNoteTitle(), shareNoteRequest.getSenderEmail()).orElseThrow(() -> new NoteNotFoundException("note not found"));
+        Notes sharedNote = noteRepository.findNotesById(shareNoteRequest.getId()).get();
 
+        List<Notes> notes = receiverEmail.getNotesList();
+        notes.add(sharedNote);
+        receiverEmail.setNotesList(notes);
 
 
         List<Notes> sharedNotes = senderEmail.getSharedNotesList();
@@ -287,32 +287,17 @@ public class UserServiceImpl implements UserService {
             senderEmail.setSharedNotesList(sharedNotes);
             senderEmail.setSharedDate(LocalDateTime.now());
             senderEmail.setId(shareNoteRequest.getId());
+
             senderEmail.setNoteTitle(shareNoteRequest.getNoteTitle());
             senderEmail.setNoteContent(shareNoteRequest.getNoteContent());
             userRepository.save(senderEmail);
-
-
-            List<Notes> receiversNotes = receiverEmail.getReceiverReceivedNote();
-            receiversNotes.add(sharedNote);
-            receiverEmail.setReceiverReceivedNote(sharedNotes);
-            receiverEmail.setSharedNotesList(sharedNotes);
-            receiverEmail.setSharedDate(LocalDateTime.now());
-            receiverEmail.setNoteTitle(shareNoteRequest.getNoteTitle());
-            receiverEmail.setNoteContent(shareNoteRequest.getNoteContent());
-
-            userRepository.save(receiverEmail);
+            ShareNoteResponse shareNoteResponse = new ShareNoteResponse();
+            shareNoteResponse.setId(sharedNote.getId());
+            return shareNoteResponse;
 
         } else {
             throw new UserNoteListIsEmptyException("user list of note is empty");
         }
-
-        ShareNoteResponse shareNoteResponse = new ShareNoteResponse();
-        shareNoteResponse.setNoteShared();
-        shareNoteResponse.setNoteTitle();
-        shareNoteResponse.setDateShared();
-        shareNoteResponse.setSenderEmail();
-        shareNoteResponse.setReceiverEmail();
-        return shareNoteResponse;
     }
 
     @Override
