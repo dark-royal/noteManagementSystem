@@ -277,7 +277,7 @@ public class UserServiceImpl implements UserService {
         validateLogin(shareNoteRequest.getSenderEmail());
         User senderEmail = userRepository.findUserByEmail(shareNoteRequest.getSenderEmail()).orElseThrow(() -> new UserNotFoundException(String.format("%s not found", shareNoteRequest.getSenderEmail())));
         User receiverEmail = userRepository.findUserByEmail(shareNoteRequest.getSenderEmail()).orElseThrow(() -> new UserNotFoundException(String.format("%s not found", shareNoteRequest.getReceiverEmail())));
-        Notes sharedNote = noteRepository.findNotesByTitleAndEmail(shareNoteRequest.getNoteTitle(), senderEmail).orElseThrow(() -> new NoteNotFoundException("note not found"));
+        Notes sharedNote = noteRepository.findNotesByTitleAndEmail(shareNoteRequest.getNoteTitle(), shareNoteRequest.getSenderEmail()).orElseThrow(() -> new NoteNotFoundException("note not found"));
 
 
 

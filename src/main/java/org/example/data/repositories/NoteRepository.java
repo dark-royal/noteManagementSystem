@@ -13,7 +13,7 @@ public interface NoteRepository extends MongoRepository<Notes,String> {
 
 
 
-    Optional<Notes> findNotesByTitleAndEmail(String title, User senderEmail);
+    Optional<Notes> findNotesByTitleAndEmail(String title, String email);
 
     Optional<Notes> findNotesById(String id);
 

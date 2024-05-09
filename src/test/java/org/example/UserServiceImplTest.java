@@ -429,6 +429,8 @@ public class UserServiceImplTest {
 
         assertEquals(2, userService.getAllNote(registerUserRequest.getEmail()).size());
 
+
+
         ShareNoteRequest shareNoteRequest = new ShareNoteRequest();
         shareNoteRequest.setReceiverEmail(registerUserRequest1.getEmail());
         shareNoteRequest.setSenderEmail(registerUserRequest.getEmail());
