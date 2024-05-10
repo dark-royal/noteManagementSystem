@@ -33,6 +33,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LockNoteResponse lockNote(LockNoteRequest lockNoteRequest) {
+        validateLogin(lockNoteRequest.getEmail());
         List<Notes> userNote = userRepository.findNotesByEmail(lockNoteRequest.getEmail());
         if (userNote != null) {
             userNote.forEach(note -> {
@@ -59,6 +60,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setUsername(registerUserRequest.getUsername());
         user.setPassword(registerUserRequest.getPassword());
+        user.setNotesList(registerUserRequest.getNoteList());
         user.setEmail(registerUserRequest.getEmail());
         var savedUser = userRepository.save(user);
 
@@ -76,8 +78,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public LoginUserResponse login(LoginUserRequest loginUserRequest) {
-
+    public LoginUserResponse login(LoginUserRequest loginUserRequest){
+        validateEmail(loginUserRequest.getEmail());
+        validatePassword(loginUserRequest.getPassword());
         User user = userRepository.findUserByEmail(loginUserRequest.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -102,6 +105,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LogoutUserResponse logout(LogoutUserRequest logoutUserRequest) {
+        validateEmail(logoutUserRequest.getEmail());
         validateLogin(logoutUserRequest.getEmail());
         User user = userRepository.findUserByEmail(logoutUserRequest.getEmail()).orElseThrow(() -> new UserNotFoundException("User not found"));
         user.setLoginStatus(false);
@@ -112,17 +116,37 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Notes> getAllNote(String email) {
-        User user = userRepository.findUserByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
+    public List<Notes> getAllNotesByUser(String email) {
+        User user = userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        System.out.println("User found: " + user.getEmail());
 
-        List<Notes> notes = noteRepository.findNotesByUser(user);
+        List<Notes> notes = noteRepository.findAll();
+        List<Notes> newNote = new ArrayList<>();
+        for(Notes notes1 : notes){
+            if(notes1 != null) {
+                if (notes1.getEmail().equals(email)) {
+                    newNote.add(notes1);
+                }
+            }
 
-        if (notes.isEmpty()) {
-            throw new NoteNotFoundException("No notes found for this user");
         }
+//                .stream()
+//                .filter(note->
+////                        {if(note != null)
+//                                note.getEmail().equals(email)
+////                }
+//                )
+//                .toList();
+//        System.out.println("Number of notes found: " + notes.size());
 
-        return notes;
+
+//        if (notes.isEmpty()) {
+//            throw new NoteNotFoundException("No notes found for this user");
+//        }
+        return newNote;
     }
+
 
     @Override
     public List<Tags> getAllTags() {
@@ -133,13 +157,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public CreateNoteResponse createNote(CreateNoteRequest createNoteRequest) {
         validateLogin(createNoteRequest.getEmail());
-        User user = userRepository.findUserByEmail(createNoteRequest.getEmail()).get();
-
+            User user = userRepository.findUserByEmail(createNoteRequest.getEmail())
+                    .orElseThrow(() -> new UserNotFoundException("User not found"));
         Notes note = new Notes();
+
         note.setTitle(createNoteRequest.getTitle());
         note.setContent(createNoteRequest.getContent());
         note.setDateCreated(createNoteRequest.getDateCreated());
-        note.setUser(user);
+        note.setEmail(user.getEmail());
         Notes savedNote = noteRepository.save(note);
 
         Tags tags = new Tags();
@@ -181,11 +206,11 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException("User with email '" + deleteNoteRequest.getEmail() + "' not found");
         }
 
-        if (!noteToDelete.getUser().getEmail().equals(user.getEmail())) {
-            DeleteNoteResponse response = new DeleteNoteResponse();
-            response.setMessage("Note with title '" + deleteNoteRequest.getTitle() + "' does not belong to the user");
-            throw new NoteDoesNotBelongToUserException("Note with title '" + deleteNoteRequest.getTitle() + "' does not belong to the user");
-        }
+//        if (!noteToDelete.getUser().getEmail().equals(user.getEmail())) {
+//            DeleteNoteResponse response = new DeleteNoteResponse();
+//            response.setMessage("Note with title '" + deleteNoteRequest.getTitle() + "' does not belong to the user");
+//            throw new NoteDoesNotBelongToUserException("Note with title '" + deleteNoteRequest.getTitle() + "' does not belong to the user");
+//        }
 
 
         noteRepository.delete(noteToDelete);
@@ -219,7 +244,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<FindAllNoteResponse> findAllNotesByEmail(FindAllNoteRequest findAllNoteRequest) {
-        validateLogin(findAllNoteRequest.getEmail());
+        //validateLogin(findAllNoteRequest.getEmail());
         List<Notes> userNotes = userRepository.findNotesByEmail(findAllNoteRequest.getEmail());
 
         if (userNotes != null && !userNotes.isEmpty()) {
@@ -254,6 +279,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public FindNoteResponse findNote(FindNoteRequest findNoteRequest) {
+        validateLogin(findNoteRequest.getEmail());
         Notes notes = userRepository.findNoteByEmailAndNoteTitle(findNoteRequest.getEmail(), findNoteRequest.getTitle());
         if (notes != null) {
             notes.setTitle(findNoteRequest.getTitle());
@@ -282,7 +308,7 @@ public class UserServiceImpl implements UserService {
 
 
         List<Notes> sharedNotes = senderEmail.getSharedNotesList();
-        if (sharedNote != null) {
+        if (!sharedNotes.isEmpty()) {
             sharedNotes.add(sharedNote);
             senderEmail.setSharedNotesList(sharedNotes);
             senderEmail.setSharedDate(LocalDateTime.now());
@@ -334,11 +360,13 @@ public class UserServiceImpl implements UserService {
     }
 
     public void validateUser(String email) {
+        validateEmail(email);
         Optional<User> user = userRepository.findUserByEmail(email);
         if (user.isPresent()) throw new UserExistException(String.format("%s already exist", email));
     }
 
     public void validateLogin(String email) {
+        validateEmail(email);
         User user = userRepository.findUserByEmail(email).orElseThrow(() -> new UserNotFoundException("user not found"));
         if (!user.isLoginStatus()) throw new UserNotLoggedInException("Pls log in ");
 
@@ -353,6 +381,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UnlockNoteResponse unlockNote(UnlockNoteRequest unlockNoteRequest){
+        validateLogin(unlockNoteRequest.getEmail());
         List<Notes> userNote = userRepository.findNotesByEmail(unlockNoteRequest.getEmail());
         if (userNote != null) {
             userNote.forEach(note -> {
@@ -374,8 +403,9 @@ public class UserServiceImpl implements UserService {
 
 
     private String  validateEmail(String email) {
-        String regex = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
-        if (email.matches(regex)) {
+        String regex = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)" +
+                "*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
+        if (email.matches(regex)){
             return email;
         } else {
             throw new InvalidEmailFormat("invalid email");
@@ -388,6 +418,7 @@ public class UserServiceImpl implements UserService {
         if(password.matches(regex)){
             return password;
         }
-        throw new InvalidPasswordFormatException("password must be 8 character, must include special characters, number,upper case, lower case ");
+        throw new InvalidPasswordFormatException("password must be 8 character, " +
+                "must include special characters, number,upper case, lower case ");
     }
 }

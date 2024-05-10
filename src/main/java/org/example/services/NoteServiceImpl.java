@@ -116,11 +116,12 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public List<Notes> findAllUserNote(User note) {
-        Optional<List<Notes>> n = noteRepository.findNoteByUser(note);
-        if (n.isPresent()) {
-            return n.get();
-        }
-        throw new RuntimeException("no");
+//        Optional<List<Notes>> n = noteRepository.fi(note);
+//        if (n.isPresent()) {
+//            return n.get();
+//        }
+//        throw new RuntimeException("no");
+        return null;
     }
 
 

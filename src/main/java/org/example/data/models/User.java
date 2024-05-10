@@ -1,13 +1,18 @@
 package org.example.data.models;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@ToString
 public class User {
     private String username;
     private String email;
@@ -19,14 +24,11 @@ public class User {
     private String noteContent;
 
     @DBRef
-    private List<Notes> notesList = new ArrayList<>();;
+    private List<Notes> notesList;
     @DBRef
-    public List<Notes> sharedNotesList = new ArrayList<>();;
+    public List<Notes> sharedNotesList;
     @DBRef
-    private List<Notes> receiverReceivedNote = new ArrayList<>();;
+    private List<Notes> receiverReceivedNote;
 
 
-    public void shareNote(List<Notes> sharedNotes) {
-
-    }
 }

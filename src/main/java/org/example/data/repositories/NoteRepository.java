@@ -22,10 +22,10 @@ public interface NoteRepository extends MongoRepository<Notes,String> {
 
     List<Tags> findByTags(String tagName);
 
-    Optional<List<Notes>> findNoteByUser(User note);
+//    Optional<List<Notes>> findNoteByUser(User note);
 
 
-    List<Notes> findNotesByUser(User user);
+//    List<Notes> findNotesByUser(User user);
 
 }
 

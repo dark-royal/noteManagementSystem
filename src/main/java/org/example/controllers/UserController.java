@@ -37,7 +37,7 @@ public class UserController {
         try {
             LoginUserResponse loginUserResponse = userService.login(loginUserRequest);
             return ResponseEntity.status(HttpStatus.OK).body(loginUserResponse);
-        } catch (InvalidPasswordException | UserNotFoundException e) {
+        } catch (InvalidPasswordException | UserNotFoundException | InvalidPasswordFormatException | InvalidEmailFormat e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
 
@@ -63,7 +63,7 @@ public class UserController {
         try {
             CreateNoteResponse createNoteResponse = userService.createNote(createNoteRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(createNoteResponse);
-        } catch (NoteAlreadyExistException| UserNotLoggedInException e) {
+        } catch (NoteAlreadyExistException| UserNotLoggedInException | UserNotFoundException | InvalidEmailFormat e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -100,7 +100,7 @@ public class UserController {
         try{
             List<FindAllNoteResponse> findAllNoteResponse = userService.findAllNotesByEmail(findAllNoteRequest);
             return ResponseEntity.status(HttpStatus.OK).body(findAllNoteResponse);
-        }catch (UserNoteListIsEmptyException e){
+        }catch (UserNoteListIsEmptyException  e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonList(e.getMessage()));
 
         }
@@ -110,7 +110,7 @@ public class UserController {
         try {
             LockNoteResponse lockNoteResponse = userService.lockNote(lockNoteRequest);
             return ResponseEntity.status(HttpStatus.LOCKED).body(lockNoteResponse);
-        } catch (UserNoteListIsEmptyException e) {
+        } catch (UserNoteListIsEmptyException | UserNotFoundException | UserNotLoggedInException e) {
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
