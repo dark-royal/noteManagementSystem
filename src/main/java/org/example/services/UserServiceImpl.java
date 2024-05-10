@@ -244,7 +244,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<FindAllNoteResponse> findAllNotesByEmail(FindAllNoteRequest findAllNoteRequest) {
-        //validateLogin(findAllNoteRequest.getEmail());
+        validateLogin(findAllNoteRequest.getEmail());
         List<Notes> userNotes = userRepository.findNotesByEmail(findAllNoteRequest.getEmail());
 
         if (userNotes != null && !userNotes.isEmpty()) {
@@ -299,32 +299,68 @@ public class UserServiceImpl implements UserService {
     public ShareNoteResponse shareNote(ShareNoteRequest shareNoteRequest) {
         validateLogin(shareNoteRequest.getSenderEmail());
         User senderEmail = userRepository.findUserByEmail(shareNoteRequest.getSenderEmail()).orElseThrow(() -> new UserNotFoundException(String.format("%s not found", shareNoteRequest.getSenderEmail())));
-        User receiverEmail = userRepository.findUserByEmail(shareNoteRequest.getSenderEmail()).orElseThrow(() -> new UserNotFoundException(String.format("%s not found", shareNoteRequest.getReceiverEmail())));
+        User receiverEmail = userRepository.findUserByEmail(shareNoteRequest.getReceiverEmail()).orElseThrow(() -> new UserNotFoundException(String.format("%s not found", shareNoteRequest.getReceiverEmail())));
         Notes sharedNote = noteRepository.findNotesById(shareNoteRequest.getId()).get();
 
-        List<Notes> notes = receiverEmail.getNotesList();
-        notes.add(sharedNote);
-        receiverEmail.setNotesList(notes);
-
-
-        List<Notes> sharedNotes = senderEmail.getSharedNotesList();
-        if (!sharedNotes.isEmpty()) {
-            sharedNotes.add(sharedNote);
-            senderEmail.setSharedNotesList(sharedNotes);
-            senderEmail.setSharedDate(LocalDateTime.now());
-            senderEmail.setId(shareNoteRequest.getId());
-
-            senderEmail.setNoteTitle(shareNoteRequest.getNoteTitle());
-            senderEmail.setNoteContent(shareNoteRequest.getNoteContent());
-            userRepository.save(senderEmail);
-            ShareNoteResponse shareNoteResponse = new ShareNoteResponse();
-            shareNoteResponse.setId(sharedNote.getId());
-            return shareNoteResponse;
-
-        } else {
-            throw new UserNoteListIsEmptyException("user list of note is empty");
+        List<Notes> sharedNotes = senderEmail.getNotesList();
+        if (sharedNotes == null) {
+            sharedNotes = new ArrayList<>();
+            senderEmail.setNotesList(sharedNotes);
         }
+
+        sharedNotes.add(sharedNote);
+        senderEmail.setSharedDate(LocalDateTime.now());
+        senderEmail.setId(shareNoteRequest.getId());
+        senderEmail.setNoteTitle(shareNoteRequest.getNoteTitle());
+        senderEmail.setNoteContent(shareNoteRequest.getNoteContent());
+
+        List<Notes> receiverNotes = receiverEmail.getReceiverReceivedNote();
+        if (receiverNotes == null) {
+            receiverNotes = new ArrayList<>();
+            receiverEmail.setReceiverReceivedNote(receiverNotes);
+        }
+        receiverNotes.add(sharedNote);
+        userRepository.save(senderEmail);
+        userRepository.save(receiverEmail);
+
+        ShareNoteResponse shareNoteResponse = new ShareNoteResponse();
+        shareNoteResponse.setId(sharedNote.getId());
+        shareNoteResponse.setNoteTitle(sharedNote.getTitle());
+        shareNoteResponse.setNoteContent(sharedNote.getContent());
+        return shareNoteResponse;
     }
+
+
+//        validateLogin(shareNoteRequest.getSenderEmail());
+//        User senderEmail = userRepository.findUserByEmail(shareNoteRequest.getSenderEmail()).orElseThrow(() -> new UserNotFoundException(String.format("%s not found", shareNoteRequest.getSenderEmail())));
+//        User receiverEmail = userRepository.findUserByEmail(shareNoteRequest.getReceiverEmail()).orElseThrow(() -> new UserNotFoundException(String.format("%s not found", shareNoteRequest.getReceiverEmail())));
+//        Notes sharedNote = noteRepository.findNotesById(shareNoteRequest.getId()).get();
+//
+//
+//        List<Notes> sharedNotes = senderEmail.getNotesList();
+//        if (!sharedNotes.isEmpty()) {
+//            senderEmail.setSharedDate(LocalDateTime.now());
+//            senderEmail.setId(shareNoteRequest.getId());
+//
+//            senderEmail.setNoteTitle(shareNoteRequest.getNoteTitle());
+//            senderEmail.setNoteContent(shareNoteRequest.getNoteContent());
+//            sharedNotes.add(sharedNote);
+//
+//            List<Notes> notes = receiverEmail.getReceiverReceivedNote();
+//            notes.add((Notes) sharedNotes);
+//            receiverEmail.setNotesList(notes);
+//
+//            userRepository.save(senderEmail);
+//
+//
+//            ShareNoteResponse shareNoteResponse = new ShareNoteResponse();
+//            shareNoteResponse.setId(sharedNote.getId());
+//            return shareNoteResponse;
+//
+//        } else {
+//            throw new UserNoteListIsEmptyException("user list of note is empty");
+//        }
+
 
     @Override
     public MakeSFavoriteResponse makeFavorites(MakeFavoritesRequest makeFavoritesRequest) {
