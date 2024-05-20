@@ -121,16 +121,16 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
         System.out.println("User found: " + user.getEmail());
 
-        List<Notes> notes = noteRepository.findAll();
-        List<Notes> newNote = new ArrayList<>();
-        for(Notes notes1 : notes){
-            if(notes1 != null) {
-                if (notes1.getEmail().equals(email)) {
-                    newNote.add(notes1);
-                }
-            }
-
-        }
+//        List<Notes> notes = noteRepository.findAll();
+//        List<Notes> newNote = new ArrayList<>();
+//        for(Notes notes1 : notes){
+//            if(notes1 != null) {
+//                if (notes1.getEmail().equals(email)) {
+//                    newNote.add(notes1);
+//                }
+//            }
+//
+//        }
 //                .stream()
 //                .filter(note->
 ////                        {if(note != null)
@@ -144,15 +144,14 @@ public class UserServiceImpl implements UserService {
 //        if (notes.isEmpty()) {
 //            throw new NoteNotFoundException("No notes found for this user");
 //        }
-        return newNote;
+        return user.getNotesList();
     }
 
 
     @Override
     public List<Tags> getAllTags() {
 
-        return tagRepository.findAll();
-    }
+        return tagRepository.findAll();   }
 
     @Override
     public CreateNoteResponse createNote(CreateNoteRequest createNoteRequest) {
@@ -190,7 +189,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public DeleteNoteResponse deleteNote(DeleteNoteRequest deleteNoteRequest) {
         validateLogin(deleteNoteRequest.getEmail());
-
+        System.out.println(validateLogin(deleteNoteRequest.getEmail()));
         Notes noteToDelete = noteRepository.findByTitle(deleteNoteRequest.getTitle());
 
         if (noteToDelete == null) {
@@ -206,11 +205,11 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException("User with email '" + deleteNoteRequest.getEmail() + "' not found");
         }
 
-//        if (!noteToDelete.getUser().getEmail().equals(user.getEmail())) {
-//            DeleteNoteResponse response = new DeleteNoteResponse();
-//            response.setMessage("Note with title '" + deleteNoteRequest.getTitle() + "' does not belong to the user");
-//            throw new NoteDoesNotBelongToUserException("Note with title '" + deleteNoteRequest.getTitle() + "' does not belong to the user");
-//        }
+        if (!noteToDelete.getEmail().equals(user.getEmail())) {
+            DeleteNoteResponse response = new DeleteNoteResponse();
+            response.setMessage("Note with title '" + deleteNoteRequest.getTitle() + "' does not belong to the user");
+            throw new NoteDoesNotBelongToUserException("Note with title '" + deleteNoteRequest.getTitle() + "' does not belong to the user");
+        }
 
 
         noteRepository.delete(noteToDelete);
@@ -280,54 +279,46 @@ public class UserServiceImpl implements UserService {
     @Override
     public FindNoteResponse findNote(FindNoteRequest findNoteRequest) {
         validateLogin(findNoteRequest.getEmail());
-        Notes notes = userRepository.findNoteByEmailAndNoteTitle(findNoteRequest.getEmail(), findNoteRequest.getTitle());
+        User notes = userRepository.findNoteByEmailAndNoteTitle(findNoteRequest.getEmail(), findNoteRequest.getTitle());
+        System.out.println("this is the notes " + notes);
         if (notes != null) {
-            notes.setTitle(findNoteRequest.getTitle());
-            notes.setContent(findNoteRequest.getContent());
-            notes.setDateCreated(LocalDateTime.now());
+            notes.setNoteTitle(findNoteRequest.getTitle());
+            notes.setNoteContent(findNoteRequest.getContent());
+            System.out.println(notes);
+            //notes.setDateCreated(LocalDateTime.now());
 
             FindNoteResponse findNoteResponse = new FindNoteResponse();
             findNoteResponse.setMessage("note found successfully");
             findNoteResponse.setTitle(findNoteRequest.getTitle());
-            findNoteResponse.setContent(findNoteRequest.getContent());
-            findNoteResponse.setDateCreated(LocalDateTime.now());
+//            findNoteResponse.setContent(findNoteRequest.getContent());
+//            findNoteResponse.setDateCreated(LocalDateTime.now());
         }
         throw new NoteNotFoundException("NOTE NOT FOUND");
     }
 
     @Override
-    public ShareNoteResponse shareNote(ShareNoteRequest shareNoteRequest) {
+    public List<Notes> shareNote(ShareNoteRequest shareNoteRequest) {
         validateLogin(shareNoteRequest.getSenderEmail());
-        User senderEmail = userRepository.findUserByEmail(shareNoteRequest.getSenderEmail()).orElseThrow(() -> new UserNotFoundException(String.format("%s not found", shareNoteRequest.getSenderEmail())));
         User receiverEmail = userRepository.findUserByEmail(shareNoteRequest.getReceiverEmail()).orElseThrow(() -> new UserNotFoundException(String.format("%s not found", shareNoteRequest.getReceiverEmail())));
-        Notes sharedNote = noteRepository.findNotesById(shareNoteRequest.getId()).get();
-
-        List<Notes> sharedNotes = senderEmail.getNotesList();
-        if (sharedNotes == null) {
-            sharedNotes = new ArrayList<>();
-            senderEmail.setNotesList(sharedNotes);
+        Optional<Notes> sharedNote = noteRepository.findNotesById(shareNoteRequest.getId());
+        if (sharedNote.isEmpty()){
+            throw new NoteNotFoundException("Note not found ");
         }
 
-        sharedNotes.add(sharedNote);
-        senderEmail.setSharedDate(LocalDateTime.now());
-        senderEmail.setId(shareNoteRequest.getId());
-        senderEmail.setNoteTitle(shareNoteRequest.getNoteTitle());
-        senderEmail.setNoteContent(shareNoteRequest.getNoteContent());
 
         List<Notes> receiverNotes = receiverEmail.getReceiverReceivedNote();
-        if (receiverNotes == null) {
-            receiverNotes = new ArrayList<>();
-            receiverEmail.setReceiverReceivedNote(receiverNotes);
-        }
-        receiverNotes.add(sharedNote);
-        userRepository.save(senderEmail);
-        userRepository.save(receiverEmail);
+        receiverNotes.add(sharedNote.get());
+        receiverEmail.setSharedNotesList(receiverNotes);
+        User u = userRepository.save(receiverEmail);
 
         ShareNoteResponse shareNoteResponse = new ShareNoteResponse();
-        shareNoteResponse.setId(sharedNote.getId());
-        shareNoteResponse.setNoteTitle(sharedNote.getTitle());
-        shareNoteResponse.setNoteContent(sharedNote.getContent());
-        return shareNoteResponse;
+        shareNoteResponse.setId(sharedNote.get().getId());
+        shareNoteResponse.setNoteTitle(sharedNote.get().getTitle());
+        shareNoteResponse.setNoteContent(sharedNote.get().getContent());
+        shareNoteResponse.setNoteList(u.getNotesList());
+
+//        System.out.println(u.sharedNotesList);
+        return u.sharedNotesList;
     }
 
 
@@ -401,7 +392,7 @@ public class UserServiceImpl implements UserService {
         if (user.isPresent()) throw new UserExistException(String.format("%s already exist", email));
     }
 
-    public void validateLogin(String email) {
+    public boolean validateLogin(String email) {
         validateEmail(email);
         User user = userRepository.findUserByEmail(email).orElseThrow(() -> new UserNotFoundException("user not found"));
         if (!user.isLoginStatus()) throw new UserNotLoggedInException("Pls log in ");
@@ -413,6 +404,7 @@ public class UserServiceImpl implements UserService {
 //                    user not found
 //                    do you mean Dark royal???🤣🤣🤣🤣""");
 //
+        return false;
     }
 
     @Override

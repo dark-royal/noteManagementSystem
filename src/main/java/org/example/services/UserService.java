@@ -45,7 +45,7 @@ public interface UserService {
 
     UpdateNoteResponse updateNote(UpdateNotesRequest updateNotesRequest);
 
-    ShareNoteResponse shareNote(ShareNoteRequest shareNoteRequest);
+    List<Notes> shareNote(ShareNoteRequest shareNoteRequest);
 
     MakeSFavoriteResponse makeFavorites(MakeFavoritesRequest makeFavoritesRequest);
 

@@ -16,6 +16,8 @@ import java.util.List;
 public class User {
     private String username;
     private String email;
+//    private Notes notesTitle;
+//    private Notes noteContent;
     private String password;
     private String id;
     private boolean loginStatus;
@@ -24,11 +26,11 @@ public class User {
     private String noteContent;
 
     @DBRef
-    private List<Notes> notesList;
+    private List<Notes> notesList = new ArrayList<>();
     @DBRef
-    public List<Notes> sharedNotesList;
+    public List<Notes> sharedNotesList  = new ArrayList<>();;
     @DBRef
-    private List<Notes> receiverReceivedNote;
+    private List<Notes> receiverReceivedNote  = new ArrayList<>();;
 
 
 }

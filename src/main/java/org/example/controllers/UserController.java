@@ -118,8 +118,7 @@ public class UserController {
     @PostMapping("/share-note")
     public ResponseEntity<?> shareNote(@RequestBody ShareNoteRequest shareNoteRequest){
         try {
-            ShareNoteResponse shareNoteResponse = userService.shareNote(shareNoteRequest);
-            return ResponseEntity.status(HttpStatus.OK).body(shareNoteResponse);
+            return ResponseEntity.status(HttpStatus.OK).body(userService.shareNote(shareNoteRequest));
         } catch (UserNoteListIsEmptyException | UserNotFoundException | NoteNotFoundException | UserNotLoggedInException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
