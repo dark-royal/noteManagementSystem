@@ -1,8 +1,11 @@
 package org.example.dtos.responses;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class UnlockNoteResponse {
     private String email;
     private String message;

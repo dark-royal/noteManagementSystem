@@ -39,7 +39,6 @@ public class NoteServiceImpl implements NoteService {
         Notes note = new Notes();
         note.setTitle(createNoteRequest.getTitle());
         note.setContent(createNoteRequest.getContent());
-        note.setDateCreated(createNoteRequest.getDateCreated());
         var savedNote = noteRepository.save(note);
 
         for (Tags tag : tagsList) {
@@ -101,7 +100,7 @@ public class NoteServiceImpl implements NoteService {
     @Override
     public List<Notes> findNoteByTagName(FindNoteRequest findNoteRequest) {
         List<Notes> foundNotes = new ArrayList<>();
-        List<Tags> tagsList = getAllTags();
+//        List<Tags> tagsList = getAllTags();
 
         for (Notes note : noteRepository.findAll()) {
             boolean containsTag = containsTagWithName(findNoteRequest.getTagName());
@@ -114,15 +113,15 @@ public class NoteServiceImpl implements NoteService {
         return foundNotes;
     }
 
-    @Override
-    public List<Notes> findAllUserNote(User note) {
-//        Optional<List<Notes>> n = noteRepository.fi(note);
-//        if (n.isPresent()) {
-//            return n.get();
-//        }
-//        throw new RuntimeException("no");
-        return null;
-    }
+//    @Override
+//    public List<Notes> findAllUserNote(User note) {
+////        Optional<List<Notes>> n = noteRepository.fi(note);
+////        if (n.isPresent()) {
+////            return n.get();
+////        }
+////        throw new RuntimeException("no");
+//        return null;
+//    }
 
 
     private List<Tags> getAllTags() {
@@ -131,9 +130,9 @@ public class NoteServiceImpl implements NoteService {
 
 
     private boolean containsTagWithName(String tagName) {
-        List<Tags> tagsList1 = noteRepository.findByTags(tagName);
-        for (Tags tag : tagsList1) {
-            if (tag.getName().equals(tagName)) {
+        List<Notes> notes = noteRepository.findNotesByTagsName(tagName);
+        for (Notes notes1 : notes) {
+            if (notes1.getTags().getName().equals(tagName)) {
                 return true;
             }
         }

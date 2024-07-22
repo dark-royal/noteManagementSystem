@@ -20,7 +20,6 @@ public interface NoteService {
 
     void deleteNote(DeleteNoteRequest deleteNoteRequest);
 
-    //UpdateNoteResponse updateNote(UpdateNotesRequest updateNoteRequest);
 
     UpdateNoteResponse updateNote(UpdateNotesRequest updateNoteRequest, String id);
 
@@ -30,7 +29,5 @@ public interface NoteService {
 
     List<Notes> findNoteByTagName(FindNoteRequest findNoteRequest);
 
-//    List<Notes> findAllUserNote(String email);
 
-    List<Notes> findAllUserNote(User note);
 }

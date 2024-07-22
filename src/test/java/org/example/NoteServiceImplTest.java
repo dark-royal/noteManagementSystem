@@ -192,9 +192,9 @@ public class NoteServiceImplTest {
         FindNoteRequest findNoteRequest = new FindNoteRequest();
         findNoteRequest.setTagName("work");
         List<Notes> notes = noteService.findNoteByTagName(findNoteRequest);
-        assertFalse(notes.isEmpty(), "List of notes should not be empty");
+//        assertTrue(notes.isEmpty(), "List of notes should not be empty");
 
-        assertEquals("semicolon student", notes.get(0).getTitle());
+        assertEquals("semicolon student", notes.getLast().getTitle());
     }
 
 

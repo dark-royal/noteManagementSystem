@@ -1,11 +1,14 @@
 package org.example.dtos.responses;
 
-import lombok.Data;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 public class CreateNoteResponse {
     private LocalDateTime dateCreated;
     private String title;

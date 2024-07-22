@@ -41,7 +41,7 @@ public interface UserService {
 
     List<FindAllNoteResponse> findAllNotesByEmail(FindAllNoteRequest findAllNoteRequest);
 
-    FindNoteResponse findNote(FindNoteRequest findNoteRequest);
+//    Notes findNote(FindNoteRequest findNoteRequest);
 
     UpdateNoteResponse updateNote(UpdateNotesRequest updateNotesRequest);
 

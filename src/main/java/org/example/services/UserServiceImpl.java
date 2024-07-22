@@ -62,6 +62,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(registerUserRequest.getPassword());
         user.setNotesList(registerUserRequest.getNoteList());
         user.setEmail(registerUserRequest.getEmail());
+//        user.setId(registerUserRequest.getId());
         var savedUser = userRepository.save(user);
 
         RegisterUserResponse response = new RegisterUserResponse();
@@ -162,7 +163,6 @@ public class UserServiceImpl implements UserService {
 
         note.setTitle(createNoteRequest.getTitle());
         note.setContent(createNoteRequest.getContent());
-        note.setDateCreated(createNoteRequest.getDateCreated());
         note.setEmail(user.getEmail());
         Notes savedNote = noteRepository.save(note);
 
@@ -210,12 +210,15 @@ public class UserServiceImpl implements UserService {
             response.setMessage("Note with title '" + deleteNoteRequest.getTitle() + "' does not belong to the user");
             throw new NoteDoesNotBelongToUserException("Note with title '" + deleteNoteRequest.getTitle() + "' does not belong to the user");
         }
+        else{
+            noteRepository.delete(noteToDelete);
+            DeleteNoteResponse response = new DeleteNoteResponse();
+            response.setMessage("Deleted note successfully");
+            return response;
+        }
 
 
-        noteRepository.delete(noteToDelete);
-        DeleteNoteResponse response = new DeleteNoteResponse();
-        response.setMessage("Deleted note successfully");
-        return response;
+
     }
 
 
@@ -276,25 +279,24 @@ public class UserServiceImpl implements UserService {
         return response;
     }
 
-    @Override
-    public FindNoteResponse findNote(FindNoteRequest findNoteRequest) {
-        validateLogin(findNoteRequest.getEmail());
-        User notes = userRepository.findNoteByEmailAndNoteTitle(findNoteRequest.getEmail(), findNoteRequest.getTitle());
-        System.out.println("this is the notes " + notes);
-        if (notes != null) {
-            notes.setNoteTitle(findNoteRequest.getTitle());
-            notes.setNoteContent(findNoteRequest.getContent());
-            System.out.println(notes);
-            //notes.setDateCreated(LocalDateTime.now());
-
-            FindNoteResponse findNoteResponse = new FindNoteResponse();
-            findNoteResponse.setMessage("note found successfully");
-            findNoteResponse.setTitle(findNoteRequest.getTitle());
+//    @Override
+//    public Notes findNote(FindNoteRequest findNoteRequest) {
+//        validateLogin(findNoteRequest.getEmail());
+//        Notes notes = userRepository.findNoteByEmailAndNoteTitle(findNoteRequest.getEmail(), findNoteRequest.getTitle());
+//        System.out.println("this is the notes " + notes);
+//        if (notes != null && u) {
+//
+//            FindNoteResponse findNoteResponse = new FindNoteResponse();
+//            findNoteResponse.setMessage("note found successfully");
+//            findNoteResponse.setTitle(findNoteRequest.getTitle());
 //            findNoteResponse.setContent(findNoteRequest.getContent());
-//            findNoteResponse.setDateCreated(LocalDateTime.now());
-        }
-        throw new NoteNotFoundException("NOTE NOT FOUND");
-    }
+//            return notes;
+//        }
+//        else{
+//            throw new NoteNotFoundException("NOTE NOT FOUND");
+//
+//        }
+//    }
 
     @Override
     public List<Notes> shareNote(ShareNoteRequest shareNoteRequest) {
@@ -374,7 +376,6 @@ public class UserServiceImpl implements UserService {
             Notes notes1 = notes.get();
             notes1.setTitle(updateNotesRequest.getTitle());
             notes1.setContent(updateNotesRequest.getContent());
-            notes1.setDateCreated(updateNotesRequest.getNewDateCreated());
             notes1.setTags(updateNotesRequest.getTagName());
 
             UpdateNoteResponse updateNoteResponse = new UpdateNoteResponse();
@@ -415,11 +416,10 @@ public class UserServiceImpl implements UserService {
             userNote.forEach(note -> {
                 note.setPassword(unlockNoteRequest.getPassword());
                 note.setLockStatus(false);
-                noteRepository.delete(note);
+                noteRepository.save(note);
             });
 
             UnlockNoteResponse unlockNoteResponse = new UnlockNoteResponse();
-            unlockNoteResponse = new UnlockNoteResponse();
             unlockNoteResponse.setLockStatus(false);
             unlockNoteResponse.setEmail(unlockNoteRequest.getEmail());
             unlockNoteResponse.setMessage("note unlocked successfully");

@@ -1,9 +1,8 @@
 package org.example.dtos.request;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 import org.example.data.models.Tags;
-import org.example.data.models.User;
 import org.springframework.data.annotation.Id;
 
 
@@ -13,7 +12,8 @@ import java.time.LocalDateTime;
 
 @Data
 public class CreateNoteRequest {
-    @Id private String id;
+   @Id
+    private String id;
     private String title;
     private String content;
     private LocalDateTime dateCreated;
